@@ -1,0 +1,10 @@
+pkg
+spec/reports
+.vimrc
+*.sw?
+.idea/
+config/database.yml
+.tddium*
+.DS_Store
+.jhw-cache
+**.orig
