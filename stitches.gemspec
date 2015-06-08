@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/stitchfix/stitches"
   s.summary     = "You'll be in stitches at how easy it is to create a service at Stitch Fix"
   s.description = "You'll be in stitches at how easy it is to create a service at Stitch Fix"
+  s.license     = "MIT"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
