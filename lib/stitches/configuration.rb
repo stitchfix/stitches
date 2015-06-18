@@ -12,6 +12,7 @@ class Stitches::Configuration
     @whitelist_regexp = nil
     @custom_http_auth_scheme = UnsetString.new("custom_http_auth_scheme")
     @env_var_to_hold_api_client_primary_key = NonNullString.new("env_var_to_hold_api_client_primary_key","STITCHES_API_CLIENT_ID")
+    @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client","STITCHES_API_CLIENT")
   end
 
   # A RegExp that whitelists URLS around the mime type and api key requirements.
@@ -43,6 +44,14 @@ class Stitches::Configuration
 
   def env_var_to_hold_api_client_primary_key=(new_env_var_to_hold_api_client_primary_key)
     @env_var_to_hold_api_client_primary_key = NonNullString.new("env_var_to_hold_api_client_primary_key",new_env_var_to_hold_api_client_primary_key)
+  end
+
+  def env_var_to_hold_api_client
+    @env_var_to_hold_api_client.to_s
+  end
+
+  def env_var_to_hold_api_client=(new_env_var_to_hold_api_client)
+    @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client",new_env_var_to_hold_api_client)
   end
 
 private
