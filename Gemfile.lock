@@ -5,6 +5,7 @@ PATH
       apitome
       pg
       rails
+      rspec (>= 3)
       rspec-rails (~> 3)
 
 GEM
