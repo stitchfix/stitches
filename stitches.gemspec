@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("rails")
   s.add_runtime_dependency("pg")
   s.add_development_dependency("rake")
+  s.add_runtime_dependency("rspec", ">= 3")
   s.add_runtime_dependency("rspec-rails", "~> 3")
   s.add_runtime_dependency("apitome")
 end

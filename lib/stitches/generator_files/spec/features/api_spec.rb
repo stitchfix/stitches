@@ -80,7 +80,7 @@ feature "general API stuff" do
       correct_code && correct_header
     end
 
-    failure_message_for_should do
+    failure_message do
       correct_code,_ = evaluate_response(response)
       if correct_code
         "Expected WWW-Authenticate header to be 'CustomKeyAuth realm=#{Rails.application.class.parent.to_s}', but was #{response['WWW-Authenticate']}"
