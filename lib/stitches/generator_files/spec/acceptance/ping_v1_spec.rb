@@ -17,7 +17,7 @@ resource "Ping (V1)" do
       result = JSON.parse(response_body)
       expect(result).to eq({ "ping" =>  { "status" => "ok" }})
 
-      status.should == 201
+      expect(status).to eql 201
 
     end
   end
@@ -39,7 +39,7 @@ resource "Ping (V1)" do
       result = JSON.parse(response_body)
       expect(result).to eq({ "errors" => [ { "code" => "test", "message" => "OH NOES!" }]})
 
-      status.should == 422
+      expect(status).to eql 422
 
     end
   end
