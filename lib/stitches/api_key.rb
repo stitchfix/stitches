@@ -35,6 +35,7 @@ module Stitches
           client = ::ApiClient.where(key: key).first
           if client.present?
             env[@configuration.env_var_to_hold_api_client_primary_key] = client.id
+            env[@configuration.env_var_to_hold_api_client] = client
             @app.call(env)
           else
             UnauthorizedResponse.new("key invalid",@realm,@configuration.custom_http_auth_scheme)

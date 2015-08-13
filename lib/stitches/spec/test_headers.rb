@@ -43,7 +43,7 @@ private
       if api_client_key.kind_of?(Array)
         headers["Authorization"] = api_client_key.join(" ")
       else
-        headers["Authorization"] = "CustomKeyAuth key=#{api_client_key}"
+        headers["Authorization"] = "#{Stitches.configuration.custom_http_auth_scheme} key=#{api_client_key}"
       end
     end
   end

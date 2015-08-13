@@ -154,6 +154,10 @@ describe Stitches::ApiKey do
       it "sets the api_client's ID in the environment" do
         expect(env[Stitches.configuration.env_var_to_hold_api_client_primary_key]).to eq(api_clients.first.id)
       end
+
+      it "sets the api_client itself in the environment" do
+        expect(env[Stitches.configuration.env_var_to_hold_api_client]).to eq(api_clients.first)
+      end
     end
 
     context "unauthorized responses" do

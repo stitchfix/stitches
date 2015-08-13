@@ -13,7 +13,9 @@ class Api::ApiController < ActionController::Base
 protected
 
   def api_client
-    @api_client ||= ::ApiClient.find(request.env[Stitches.configuration.env_var_to_hold_api_client_primary_key])
+    @api_client ||= request.env[Stitches.configuration.env_var_to_hold_api_client]
+    # Use this if you want to look up the ApiClient instead of using the one placed into the env
+    # @api_client ||= ApiClient.find(request.env[Stitches.configuration.env_var_to_hold_api_client_primary_key])
   end
 
 end
