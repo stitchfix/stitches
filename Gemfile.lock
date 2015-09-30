@@ -141,6 +141,3 @@ PLATFORMS
 DEPENDENCIES
   rake
   stitches!
-
-BUNDLED WITH
-   1.10.6
