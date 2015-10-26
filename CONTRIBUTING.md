@@ -16,4 +16,3 @@ Thanks for using and improving *stitches*! If you'd like to help out, check out 
 
 * When in doubt, test it.  If you can't test it, re-think what you are doing.
 * Code formatting and internal application architecture should be consistent.
-* If you are changing UI, include screenshots or screencasts of the change.
