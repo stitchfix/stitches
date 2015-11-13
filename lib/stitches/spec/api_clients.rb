@@ -1,5 +1,5 @@
 module ApiClients
-  def api_client(name: "test")
-    ::ApiClient.where(name: name).first or ::ApiClient.create!(name: name).reload
+  def api_client(options = { name: "test" })
+    ::ApiClient.where(name: options[:name]).first or ::ApiClient.create!(name: options[:name]).reload
   end
 end
