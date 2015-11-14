@@ -4,14 +4,10 @@ module Stitches
   describe Error do
     describe '#initialize' do
       context 'required params are set' do
-        subject { described_class.new(code: anything, message: anything) }
-
-        it 'sets the code ivar' do
-          expect(subject.instance_variable_get(:@code)).to_not be_nil
-        end
-
-        it 'sets the message ivar' do
-          expect(subject.instance_variable_get(:@message)).to_not be_nil
+        it 'does not raise error' do
+          expect do
+            described_class.new(code: anything, message: anything)
+          end.to_not raise_error
         end
       end
 
