@@ -1,5 +1,7 @@
 You'll be in stitches at how easy it is to get your API service up and running!
 
+![build status](https://travis-ci.org/stitchfix/resque-brain.svg?branch=master)
+
 This gem provides:
 
 * Rails plugin to handle api key and versioned requests
