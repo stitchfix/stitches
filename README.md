@@ -212,7 +212,7 @@ config.app_middleware.use "Stitches::ValidMimeType", except: %r{/super-secret}
 
 Although `Stitches.configuration` is global, do not depend directly on that in your logic.  Instead, allow all classes to receive a
 configuration object in their constructor.  This makes the classes easier to deal with and change, without incurring much of a real cost to development.
-Glaobl symbols suck, but are convienient.  This is how you make the most of it.
+Global symbols suck, but are convienient.  This is how you make the most of it.
 
 
 ---
