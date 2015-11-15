@@ -75,7 +75,7 @@ module Stitches
                   else
                     object.errors.full_messages_for(field).sort.join(', ')
                   end
-        Stitches::Error.new(code: "#{field}_invalid".parameterize, message: message)
+        Stitches::Error.new(code: code, message: message)
       }
       self.new(errors)
     end
