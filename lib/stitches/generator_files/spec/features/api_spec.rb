@@ -1,4 +1,4 @@
-require 'spec_helper.rb'
+require 'rails_helper.rb'
 
 feature "general API stuff" do
   scenario "good request" do

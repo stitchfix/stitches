@@ -53,7 +53,8 @@ mount api_docs, at: "docs"
 
       inject_into_file "Gemfile", after: /^group :test, :development do.*$/ do<<-GEM
 
-gem "rspec_api_documentation"
+  gem "rspec_api_documentation"
+  gem "capybara"
       GEM
       end
       run 'bundle install'
@@ -62,16 +63,17 @@ gem "rspec_api_documentation"
       sleep 1 # allow clock to tick so we get different numbers
       migration_template "db/migrate/create_api_clients.rb", "db/migrate/create_api_clients.rb"
 
-      inject_into_file 'spec/spec_helper.rb', %q{
+      inject_into_file 'spec/rails_helper.rb', %q{
 config.include RSpec::Rails::RequestExampleGroup, type: :feature
 }, before: /^end/
 
-      inject_into_file 'spec/spec_helper.rb', before: /^RSpec.configure/ do<<-REQUIRE
+      inject_into_file 'spec/rails_helper.rb', before: /^RSpec.configure/ do<<-REQUIRE
 require 'stitches/spec'
       REQUIRE
       end
 
-      append_to_file 'spec/spec_helper.rb' do<<-RSPEC_API
+      append_to_file 'spec/rails_helper.rb' do<<-RSPEC_API
+require 'rspec_api_documentation'
 RspecApiDocumentation.configure do |config|
 config.format = :json
 config.request_headers_to_include = %w(
