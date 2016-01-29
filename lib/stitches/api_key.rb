@@ -28,7 +28,7 @@ module Stitches
   protected
 
     def do_call(env)
-      return if @configuration.disable_authorization || ENV['DISABLE_API_AUTHORIZATION'] == 'true'
+      return if @configuration.disable_api_auth
 
       authorization = env["HTTP_AUTHORIZATION"]
       if authorization
