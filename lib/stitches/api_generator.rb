@@ -62,6 +62,8 @@ mount api_docs, at: "docs"
       migration_template "db/migrate/enable_uuid_ossp_extension.rb", "db/migrate/enable_uuid_ossp_extension.rb"
       sleep 1 # allow clock to tick so we get different numbers
       migration_template "db/migrate/create_api_clients.rb", "db/migrate/create_api_clients.rb"
+      sleep 1 # allow clock to tick so we get different numbers
+      migration_template "db/migrate/add_active_to_api_clients.rb", "db/migrate/add_active_to_api_clients.rb"
 
       inject_into_file 'spec/rails_helper.rb', %q{
 config.include RSpec::Rails::RequestExampleGroup, type: :feature
