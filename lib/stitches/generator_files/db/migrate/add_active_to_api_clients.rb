@@ -1,4 +1,4 @@
-class CreateApiClients < ActiveRecord::Migration
+class AddActiveToApiClients < ActiveRecord::Migration
   def change
     add_column :api_clients, :active, :boolean, default: true, null: false
   end
