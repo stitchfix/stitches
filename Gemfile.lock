@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stitches (3.2.2)
+    stitches (3.2.3)
       apitome
       pg
       rails
