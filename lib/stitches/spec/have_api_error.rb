@@ -31,16 +31,13 @@ RSpec::Matchers.define :have_api_error do |expected_fields|
   end
 
   failure_message do |response|
-    if response.response_code != (expected_fields[:status] || 422)
-      "HTTP status was #{response.response_code} and not 422"
+    expected_status = (expected_fields[:status] || 422)
+    if response.response_code != expected_status
+      "HTTP status was #{response.response_code} and not #{expected_status}"
     else
       error = extract_error(response,expected_fields)
       if error
-        if error["code"] != expected_fields.fetch(:code)
-          "Expected code to be '#{expected_fields[:code]}', but was '#{error['code']}'"
-        else
-          "Expected message to be '#{expected_fields[:message]}', but was '#{error['message']}'"
-        end
+        "Expected message to be '#{expected_fields[:message]}', but was '#{error['message']}'"
       else
         "Could not find an error for code #{expected_fields[:code]} from #{response.body}"
       end

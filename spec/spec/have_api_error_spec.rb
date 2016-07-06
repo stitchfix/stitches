@@ -8,6 +8,7 @@ describe "have_api_error" do
       { code: "baz", message: "quux" }
     ]
   }
+  let(:response_code) { 422 }
   let(:response) {
     double(
       response_code: response_code,
@@ -60,10 +61,31 @@ describe "have_api_error" do
   context "expected status is specified" do
     context "status is the expected status" do
       let(:response_code) { 404 }
-      it "indicates there is an error" do
-        expect(response).to have_api_error(status: 404,
-                                           code: errors.first[:code],
-                                           message: errors.first[:message])
+      context "there is an error" do
+        it "indicates there is an error" do
+          expect(response).to have_api_error(status: 404,
+                                             code: errors.first[:code],
+                                             message: errors.first[:message])
+        end
+      end
+      context "there is not an error" do
+        context "and the status code is what's wrong" do
+          let(:response) {
+            double(
+              response_code: 401,
+              body: { errors: errors }.to_json)
+          }
+          it "fails the test" do
+            begin
+              expect(response).to have_api_error(status: 404,
+                                                 code: errors.first[:code],
+                                                 message: errors.first[:message])
+            rescue Exception => ex
+              expect(ex.class).to eq(RSpec::Expectations::ExpectationNotMetError)
+              expect(ex.message).to match(/HTTP status was 401 and not 404/i)
+            end
+          end
+        end
       end
     end
     context "status is not the expected status" do
@@ -72,6 +94,58 @@ describe "have_api_error" do
         expect(response).not_to have_api_error(status: 404,
                                                code: errors.first[:code],
                                                message: errors.first[:bar])
+      end
+    end
+    context "response errors don't match expectations" do
+      context "because the status code is what's wrong" do
+        let(:response) {
+          double(
+            response_code: 401,
+            body: { errors: errors }.to_json)
+        }
+        it "fails the test" do
+          begin
+            expect(response).to have_api_error(code: errors.first[:code],
+                                               message: errors.first[:message])
+          rescue Exception => ex
+            expect(ex.class).to eq(RSpec::Expectations::ExpectationNotMetError)
+            expect(ex.message).to match(/HTTP status was 401 and not 422/i)
+          end
+        end
+      end
+      context "because there is no matching code" do
+        let(:errors) {
+          [
+            { code: "foo", message: "bar" },
+            { code: "baz", message: "quux" }
+          ]
+        }
+        it "fails the test" do
+          begin
+            expect(response).to have_api_error(code: errors.first[:code] + "blah",
+                                               message: errors.first[:message])
+          rescue Exception => ex
+            expect(ex.class).to eq(RSpec::Expectations::ExpectationNotMetError)
+            expect(ex.message).to match(/Could not find an error for code/i)
+          end
+        end
+      end
+      context "because there is no matching message" do
+        let(:errors) {
+          [
+            { code: "foo", message: "bar" },
+            { code: "baz", message: "quux" }
+          ]
+        }
+        it "fails the test" do
+          begin
+            expect(response).to have_api_error(code: errors.first[:code],
+                                               message: errors.first[:message] + "blah")
+          rescue Exception => ex
+            expect(ex.class).to eq(RSpec::Expectations::ExpectationNotMetError)
+            expect(ex.message).to match(/Expected message to be/i)
+          end
+        end
       end
     end
   end
