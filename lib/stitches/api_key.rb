@@ -32,7 +32,7 @@ module Stitches
       if authorization
         if authorization =~ /#{@configuration.custom_http_auth_scheme}\s+key=(.*)\s*$/
           key = $1
-          client = ::ApiClient.where(key: key).first
+          client = ::ApiClient.where(key: key, enabled: true).first
           if client.present?
             env[@configuration.env_var_to_hold_api_client_primary_key] = client.id
             env[@configuration.env_var_to_hold_api_client] = client
