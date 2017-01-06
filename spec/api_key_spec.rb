@@ -7,6 +7,9 @@ end
 
 unless defined? ApiClient
   class ApiClient
+    def self.column_names
+      ["enabled"]
+    end
   end
 end
 
@@ -17,7 +20,7 @@ describe Stitches::ApiKey do
       double(ApiClient, id: 42)
     ]
   }
-  
+
   before do
     Stitches.configuration.reset_to_defaults!
     Stitches.configuration.custom_http_auth_scheme = 'MyAwesomeInternalScheme'
