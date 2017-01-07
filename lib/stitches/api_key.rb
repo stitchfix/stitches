@@ -36,7 +36,7 @@ module Stitches
           if ApiClient.column_names.include?("enabled")
             client = ApiClient.where(key: key, enabled: true).first
           else
-            ActiveSupport::Deprecation.warn('api_keys is missing "enabled" column')
+            ActiveSupport::Deprecation.warn('api_keys is missing "enabled" column.  Run "rails g stitches:add_enabled_to_api_clients"')
             client = ApiClient.where(key: key).first
           end
 
