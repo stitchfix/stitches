@@ -41,6 +41,20 @@ Run database migrations (do `rake db:create` first if you haven't yet set up a d
 rake db:migrate
 ```
 
+### Upgrading from older verison of Stitches
+
+If you have used stitches before the `enabled` field was added to `ApiClients`, you need to add that field to your database.  You can do this by running
+the included generator:
+
+```
+rails g stitches:add_enabled_to_api_clients
+```
+
+And then:
+
+```
+rake db:migrate
+```
 
 ## Test the install
 
