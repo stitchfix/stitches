@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stitches (3.2.3)
+    stitches (3.3.0)
       apitome
       pg
       rails
@@ -153,4 +153,4 @@ DEPENDENCIES
   stitches!
 
 BUNDLED WITH
-   1.12.5
+   1.13.6
