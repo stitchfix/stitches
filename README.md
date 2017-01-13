@@ -217,8 +217,8 @@ Stitches.configure do |config|
 end
 
 # config/application.rb
-config.app_middleware.use "Stitches::ApiKey", except: %r{/super-secret}
-config.app_middleware.use "Stitches::ValidMimeType", except: %r{/super-secret}
+config.app_middleware.use Stitches::ApiKey, except: %r{/super-secret}
+config.app_middleware.use Stitches::ValidMimeType, except: %r{/super-secret}
 # or whatever you want to do
 ```
 
