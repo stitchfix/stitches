@@ -3,7 +3,11 @@ require 'rails_helper.rb'
 feature "general API stuff" do
   scenario "good request" do
     headers = TestHeaders.new
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response.response_code).to eq(201)
     expect(JSON.parse(response.body)["ping"]["status"]).to eq("ok")
@@ -11,7 +15,11 @@ feature "general API stuff" do
 
   scenario "good request to v2" do
     headers = TestHeaders.new(version: 2)
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response.response_code).to eq(201)
     expect(JSON.parse(response.body)["ping"]["status_v2"]).to eq("ok")
@@ -19,7 +27,11 @@ feature "general API stuff" do
 
   scenario "good request with custom status" do
     headers = TestHeaders.new
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: { status: 200 }.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {status: 200}.to_json, headers.headers
+<% end -%>
 
     expect(response.response_code).to eq(200)
     expect(JSON.parse(response.body)["ping"]["status"]).to eq("ok")
@@ -27,35 +39,55 @@ feature "general API stuff" do
 
   scenario "request with user error" do
     headers = TestHeaders.new
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: { error: "OH NOES!" }.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {error: "OH NOES!"}.to_json, headers.headers
+<% end -%>
 
     expect(response).to have_api_error(code: "test", message: "OH NOES!")
   end
 
   scenario "no auth header given" do
     headers = TestHeaders.new(api_client: nil)
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response).to have_auth_error
   end
 
   scenario "weird auth header given" do
     headers = TestHeaders.new(api_client: ["Basic","foo:bar"])
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response).to have_auth_error
   end
 
   scenario "bad key given" do
     headers = TestHeaders.new(api_client: "foobar")
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response).to have_auth_error
   end
 
   scenario "no version" do
     headers = TestHeaders.new(version: nil)
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response.response_code).to eq(406)
   end
@@ -63,13 +95,21 @@ feature "general API stuff" do
   scenario "version we don't support" do
     headers = TestHeaders.new(version: 999)
     expect {
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+      post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
       post "/api/ping", {}.to_json, headers.headers
+<% end -%>
     }.to raise_error(ActionController::RoutingError)
   end
 
   scenario "wrong mime type" do
     headers = TestHeaders.new(mime_type: "application/foobar")
+<% if ::Rails::VERSION::MAJOR >= 5 -%>
+    post("/api/ping", params: {}.to_json, headers: headers.headers)
+<% else -%>
     post "/api/ping", {}.to_json, headers.headers
+<% end -%>
 
     expect(response.response_code).to eq(406)
   end
