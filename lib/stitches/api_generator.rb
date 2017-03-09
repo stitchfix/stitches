@@ -48,7 +48,7 @@ mount api_docs, at: "docs"
       copy_file "app/models/api_client.rb"
       copy_file "config/initializers/stitches.rb"
       copy_file "lib/tasks/generate_api_key.rake"
-      copy_file "spec/features/api_spec.rb", "spec/features/api_spec.rb"
+      template "spec/features/api_spec.rb.erb", "spec/features/api_spec.rb"
       copy_file "spec/acceptance/ping_v1_spec.rb", "spec/acceptance/ping_v1_spec.rb"
 
       inject_into_file "Gemfile", after: /^group :test, :development do.*$/ do<<-GEM
