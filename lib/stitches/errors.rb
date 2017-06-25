@@ -46,7 +46,7 @@ module Stitches
   #     if person.valid?
   #       render json: { person: person }, status: 201
   #     else
-  #       render json: { errors: Stitches::Errors.from_active_record_object(person)
+  #       render json: { errors: Stitches::Errors.from_active_record_object(person) }, status: 422
   #     end
   #
   # This will create one error for each field of the main object.  The code will be "field_invalid" and
