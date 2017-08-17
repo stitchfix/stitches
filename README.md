@@ -26,6 +26,15 @@ Then:
 bundle install
 ```
 
+Then, set it up:
+
+```
+> bin/rails generate rspec:install
+> bin/rails generate apitome:install
+> bin/rails generate stitches:api
+> bundle exec rake db:migrate
+```
+
 ## Example Microservice Endpoint
 
 Suppose we wish to allow our consumers to create Widgets
