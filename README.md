@@ -71,10 +71,7 @@ about it in your code.
 * This is a versioned request.  While the URL will *not* contain `v1` in it, the `Accept` header will require a version and get
 routed here.  If you make a V2, it's just a new controller and this concern is handled at the routing layer.
 
-All this means that the Rails skills of you and your team can be directly applied to building microservices.  You don't have to
-make a bunch of boring decisions about auth, versioning or content-types.  It also means you can start deploying and creating
-microservices with little friction.  No need to deal with a complex DSL or new programming language to get yourselves going with
-Microservices.
+All this means that the Rails skills of you and your team can be directly applied to building microservices.  You don't have to make a bunch of boring decisions about auth, versioning, or content-types.  It also means you can start deploying and creating microservices with little friction.  No need to deal with a complex DSL or new programming language to get yourselves going with Microservices.
 
 ## More Info
 
