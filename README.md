@@ -7,7 +7,7 @@ This gem provides:
 * transparent API key authentication.
 * router-level API version based on headers.
 * a way to document your microservice endpoints via acceptance tests.
-* structure errors, buildable from invalid Active Records, Exceptions, or by hand.
+* structured errors, buildable from invalid Active Records, Exceptions, or by hand.
 
 This, plus much of what you get from Rails already, means you can create a microservice Rails application by just writing the
 same Rails code you write today.  Instead of rendering web views, you render JSON (which is built into Rails).
