@@ -47,7 +47,7 @@ class Api::V1::WidgetsController < ApiController
       head 201
     else
       render json: { 
-        errors: Stitches::Errors.from_active_record(widget) 
+        errors: Stitches::Errors.from_active_record_object(widget) 
       }, status: 422
     end
   end
