@@ -8,3 +8,4 @@ config/database.yml
 .DS_Store
 .jhw-cache
 **.orig
+Gemfile.lock
