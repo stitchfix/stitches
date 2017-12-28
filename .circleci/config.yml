@@ -1,0 +1,144 @@
+# DO NOT MODIFY - this is managed by Git Reduce in goro
+#
+---
+version: 2
+jobs:
+  ruby-2.5.0-rails-5.1:
+    docker:
+    - image: circleci/ruby:2.5.0
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-5.1
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify eng-platform
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+  ruby-2.4.3-rails-5.1:
+    docker:
+    - image: circleci/ruby:2.4.3
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-5.1
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify eng-platform
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+  ruby-2.5.0-rails-5.0:
+    docker:
+    - image: circleci/ruby:2.5.0
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-5.0
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify eng-platform
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+  ruby-2.4.3-rails-5.0:
+    docker:
+    - image: circleci/ruby:2.4.3
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-5.0
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify eng-platform
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+  ruby-2.5.0-rails-4.2:
+    docker:
+    - image: circleci/ruby:2.5.0
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-4.2
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify eng-platform
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+  ruby-2.4.3-rails-4.2:
+    docker:
+    - image: circleci/ruby:2.4.3
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-4.2
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify eng-platform
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+workflows:
+  version: 2
+  on-commit:
+    jobs:
+    - ruby-2.5.0-rails-5.1:
+        context: org-global
+    - ruby-2.4.3-rails-5.1:
+        context: org-global
+    - ruby-2.5.0-rails-5.0:
+        context: org-global
+    - ruby-2.4.3-rails-5.0:
+        context: org-global
+    - ruby-2.5.0-rails-4.2:
+        context: org-global
+    - ruby-2.4.3-rails-4.2:
+        context: org-global
+  scheduled:
+    triggers:
+    - schedule:
+        cron: 53 20 * * 1,2,3,4,5
+        filters:
+          branches:
+            only:
+            - master
+    jobs:
+    - ruby-2.5.0-rails-5.1:
+        context: org-global
+    - ruby-2.4.3-rails-5.1:
+        context: org-global
+    - ruby-2.5.0-rails-5.0:
+        context: org-global
+    - ruby-2.4.3-rails-5.0:
+        context: org-global
+    - ruby-2.5.0-rails-4.2:
+        context: org-global
+    - ruby-2.4.3-rails-4.2:
+        context: org-global

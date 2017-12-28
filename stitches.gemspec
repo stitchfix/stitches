@@ -23,4 +23,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("rspec", ">= 3")
   s.add_runtime_dependency("rspec-rails", "~> 3")
   s.add_runtime_dependency("apitome")
+  s.add_development_dependency('rspec_junit_formatter')
 end
