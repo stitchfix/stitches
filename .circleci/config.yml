@@ -11,7 +11,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
-    - run: bundle install
+    - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
@@ -28,7 +28,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
-    - run: bundle install
+    - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
@@ -45,7 +45,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
-    - run: bundle install
+    - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
@@ -62,7 +62,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
-    - run: bundle install
+    - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
@@ -79,7 +79,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
-    - run: bundle install
+    - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
@@ -96,7 +96,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
-    - run: bundle install
+    - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
         --format=doc
     - run:
