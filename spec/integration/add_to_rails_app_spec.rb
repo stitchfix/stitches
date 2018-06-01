@@ -8,11 +8,13 @@ RSpec.describe "Adding Stitches to a New Rails App" do
 
   def run(command)
     stdout, stderr, stat = Open3.capture3(command)
-    if ENV["DEBUG"] == 'true' || !stat.success?
+    success = stat.success? && stdout !~ /Could not find generator/im
+
+    if ENV["DEBUG"] == 'true' || !success
       $stdout.puts stdout
       $stderr.puts stderr
     end
-    unless stat.success?
+    unless success
       raise "'#{command}' failed"
     end
   end
@@ -76,7 +78,7 @@ RSpec.describe "Adding Stitches to a New Rails App" do
     end
   end
 
-  xit "inserts the deprecation module into ApiController" do
+  it "inserts the deprecation module into ApiController" do
     run "bin/rails generate rspec:install"
     run "bin/rails generate apitome:install"
     run "bin/rails generate stitches:api"
@@ -87,14 +89,14 @@ RSpec.describe "Adding Stitches to a New Rails App" do
     api_controller_contents = File.read(api_controller).split(/\n/)
     File.open(api_controller,"w") do |file|
       api_controller_contents.each do |line|
-        file.puts line unless line =~ /Stitches::DeprecationPolicy/
+        file.puts line unless line =~ /Stitches::Deprecation/
       end
     end
 
-    run "bin/rails generate stitches:deprecation_policy"
+    run "bin/rails generate stitches:add_deprecation"
 
     aggregate_failures do
-      expect(File.read(api_controller)).to include("include Stitches::DeprecationPolicy")
+      expect(File.read(api_controller)).to include("include Stitches::Deprecation")
     end
   end
 

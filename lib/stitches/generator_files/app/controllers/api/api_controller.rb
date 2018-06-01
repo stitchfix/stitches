@@ -1,4 +1,5 @@
 class Api::ApiController < ActionController::Base
+  include Stitches::Deprecation
   rescue_from ActiveRecord::RecordNotFound do |exception|
     respond_to do |type|
       type.json { render json: { errors: Stitches::Errors.new([ Stitches::Error.new(code: "not_found", message: exception.message) ]) }, status: 404 }
