@@ -1,10 +1,10 @@
 class DeprecationAnalysis
   attr_reader :expected_sunset_value, :status, :sunset_value
-  def initialize(rspec_api_documentation_context, retiring_on)
-    retiring_on_date = Date.parse(retiring_on)
-    if retiring_on_date > Date.today
+  def initialize(rspec_api_documentation_context, gone_on)
+    gone_on_date = Date.parse(gone_on)
+    if gone_on_date > Date.today
       @expecting_sunset      = true
-      @expected_sunset_value = retiring_on_date.in_time_zone("GMT").midnight.strftime("%a, %e %b %Y %H:%M:%S %Z")
+      @expected_sunset_value = gone_on_date.in_time_zone("GMT").midnight.strftime("%a, %e %b %Y %H:%M:%S %Z")
       @sunset_header_set     = rspec_api_documentation_context.response_headers["Sunset"].present?
       @sunset_value          = rspec_api_documentation_context.response_headers["Sunset"]
       @sunset_header_match   = @expected_sunset_value == @sunset_value
@@ -21,9 +21,9 @@ class DeprecationAnalysis
   def gone?;                !!@gone;                end
 end
 
-RSpec::Matchers.define :show_deprecation do |retiring_on:|
+RSpec::Matchers.define :show_deprecation do |gone_on:|
   match do |rspec_api_documentation_context|
-    analysis = DeprecationAnalysis.new(rspec_api_documentation_context,retiring_on)
+    analysis = DeprecationAnalysis.new(rspec_api_documentation_context,gone_on)
     if analysis.expecting_sunset?
       analysis.sunset_header_match?
     else
@@ -31,7 +31,7 @@ RSpec::Matchers.define :show_deprecation do |retiring_on:|
     end
   end
   failure_message do |rspec_api_documentation_context|
-    analysis = DeprecationAnalysis.new(rspec_api_documentation_context,retiring_on)
+    analysis = DeprecationAnalysis.new(rspec_api_documentation_context,gone_on)
     if analysis.expecting_sunset?
       if analysis.sunset_header_set?
         "Expected the Sunset header to be #{analysis.expected_sunset_value}, but was '#{analysis.sunset_value}'"

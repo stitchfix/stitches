@@ -97,7 +97,7 @@ See [the wiki](https://github.com/stitchfix/stitches/wiki/Setup) for how to setu
   - Versioned requests via HTTP content types
   - Structured Errors
   - ISO 8601-formatted dates
-  - Deprecation using the Sunset header
+  - Deprecation using the `Sunset` header
 * The [Generator](https://github.com/stitchfix/stitches/wiki/Generator) sets up some code in your app, so you can start writing
 APIs using vanilla Rails idioms:
   - a "ping" controller that can vaidate your app is working

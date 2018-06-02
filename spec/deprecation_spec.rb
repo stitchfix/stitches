@@ -27,16 +27,16 @@ describe Stitches::Deprecation do
       allow(logger).to receive(:info)
     end
     it "sets the Sunset header to the date given in GMT" do
-      fake_controller.deprecated(to_be_retired_on: "2018-01-01") {}
+      fake_controller.deprecated(gone_on: "2018-01-01") {}
       expect(response).to have_received(:set_header).with("Sunset","Mon,  1 Jan 2018 00:00:00 GMT")
     end
     it "logs about the request and current API key id" do
-      fake_controller.deprecated(to_be_retired_on: "2018-01-01") {}
+      fake_controller.deprecated(gone_on: "2018-01-01") {}
       expect(logger).to have_received(:info).with(/deprecated.*#{Regexp.escape(request.method)}.*#{Regexp.escape(request.fullpath)}.*#{Regexp.escape(api_client.id.to_s)}/i)
     end
     it "executes and returns the block" do
       block_executed = false
-      result = fake_controller.deprecated(to_be_retired_on: "2018-01-01") do
+      result = fake_controller.deprecated(gone_on: "2018-01-01") do
         block_executed = true
         42
       end
