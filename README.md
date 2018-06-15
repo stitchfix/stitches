@@ -35,6 +35,21 @@ Then, set it up:
 > bundle exec rake db:migrate
 ```
 
+### Upgrading from an older version
+
+* If you have a version lower than 3.3.0, you need to run two generators, one of which creates a new database migration on your
+`api_clients` table:
+
+  ```
+  > bin/rails generate stitches:add_enabled_to_api_clients
+  > bin/rails generate stitches:add_deprecation
+  ```
+* If you have a version lower than 3.6.0, you need to run one generator:
+
+  ```
+  > bin/rails generate stitches:add_deprecation
+  ```
+
 ## Example Microservice Endpoint
 
 Suppose we wish to allow our consumers to create Widgets
@@ -82,6 +97,7 @@ See [the wiki](https://github.com/stitchfix/stitches/wiki/Setup) for how to setu
   - Versioned requests via HTTP content types
   - Structured Errors
   - ISO 8601-formatted dates
+  - Deprecation using the `Sunset` header
 * The [Generator](https://github.com/stitchfix/stitches/wiki/Generator) sets up some code in your app, so you can start writing
 APIs using vanilla Rails idioms:
   - a "ping" controller that can vaidate your app is working
@@ -93,7 +109,11 @@ APIs using vanilla Rails idioms:
 
 ## Developing
 
-Although `Stitches.configuration` is global, do not depend directly on that in your logic.  Instead, allow all classes to receive a configuration object in their constructor.  This makes the classes easier to deal with and change, without incurring much of a real cost to development.  Global symbols suck, but are convienient.  This is how you make the most of it.
+Although `Stitches.configuration` is global, do not depend directly on that in your logic.  Instead, allow all classes to receive a configuration object in their constructor.  This makes the classes easier to deal with and change, without incurring much of a real cost to development.  Global symbols suck, but are convenient.  This is how you make the most of it.
+
+Also, the integration test does a lot of "testing the implementation", but since Rails generators are notorious for silently
+failing with a successful result, we have to make sure that the various `inject_into_file` calls are actually working.  Do not do
+any fancy refactors here, just keep it up to date.
 
 ---
 

@@ -17,11 +17,13 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- exe/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+
   s.add_runtime_dependency("rails")
   s.add_runtime_dependency("pg")
-  s.add_development_dependency("rake")
   s.add_runtime_dependency("rspec", ">= 3")
   s.add_runtime_dependency("rspec-rails", "~> 3")
   s.add_runtime_dependency("apitome")
-  s.add_development_dependency('rspec_junit_formatter')
+
+  s.add_development_dependency("rake")
+  s.add_development_dependency("rspec_junit_formatter")
 end

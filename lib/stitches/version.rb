@@ -1,3 +1,3 @@
 module Stitches
-  VERSION = '3.4.0'
+  VERSION = '3.6.0'
 end

@@ -12,10 +12,12 @@ module Stitches
 
     desc "Bootstraps your API service with a basic ping controller and spec to ensure everything is setup properly"
     def bootstrap_api
-      inject_into_file "Gemfile", after: /^gem ["']pg['"].*$/ do<<-GEM
+      inject_into_file "Gemfile", after: /^gem ['"]rails['"].*$/ do<<-GEM
 
 gem "apitome"
 gem "responders"
+gem "rspec_api_documentation", group: [ :development, :test ]
+gem "capybara", group: [ :development, :test ]
       GEM
       end
       inject_into_file "config/routes.rb", before: /^end/ do<<-ROUTES
@@ -51,12 +53,6 @@ mount api_docs, at: "docs"
       template "spec/features/api_spec.rb.erb", "spec/features/api_spec.rb"
       copy_file "spec/acceptance/ping_v1_spec.rb", "spec/acceptance/ping_v1_spec.rb"
 
-      inject_into_file "Gemfile", after: /^group :test, :development do.*$/ do<<-GEM
-
-  gem "rspec_api_documentation"
-  gem "capybara"
-      GEM
-      end
       run 'bundle install'
 
       migration_template "db/migrate/enable_uuid_ossp_extension.rb", "db/migrate/enable_uuid_ossp_extension.rb"
