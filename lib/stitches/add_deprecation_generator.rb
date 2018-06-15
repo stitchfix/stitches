@@ -7,6 +7,7 @@ module Stitches
     desc "Adds deprecation support to an app creates with an older version of stitches"
     def add_deprecation
       inject_into_file "app/controllers/api/api_controller.rb", after: /^class.*$/ do<<-CODE
+
   include Stitches::Deprecation
       CODE
       end
