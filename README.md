@@ -109,7 +109,7 @@ APIs using vanilla Rails idioms:
 
 ## Developing
 
-Although `Stitches.configuration` is global, do not depend directly on that in your logic.  Instead, allow all classes to receive a configuration object in their constructor.  This makes the classes easier to deal with and change, without incurring much of a real cost to development.  Global symbols suck, but are convienient.  This is how you make the most of it.
+Although `Stitches.configuration` is global, do not depend directly on that in your logic.  Instead, allow all classes to receive a configuration object in their constructor.  This makes the classes easier to deal with and change, without incurring much of a real cost to development.  Global symbols suck, but are convenient.  This is how you make the most of it.
 
 Also, the integration test does a lot of "testing the implementation", but since Rails generators are notorious for silently
 failing with a successful result, we have to make sure that the various `inject_into_file` calls are actually working.  Do not do
