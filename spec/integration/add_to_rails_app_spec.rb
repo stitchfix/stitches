@@ -95,9 +95,12 @@ RSpec.describe "Adding Stitches to a New Rails App" do
 
     run "bin/rails generate stitches:add_deprecation"
 
-    aggregate_failures do
-      expect(File.read(api_controller)).to include("include Stitches::Deprecation")
-    end
+    lines =  File.read(api_controller).split(/\n/)
+    include_line = lines.detect { |line|
+      line =~ /^\s+include Stitches::Deprecation$/
+    }
+
+    expect(include_line).to_not be_nil,lines.inspect
   end
 
   class RoutesFileAnalysis
