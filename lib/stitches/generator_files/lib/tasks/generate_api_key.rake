@@ -1,5 +1,6 @@
 desc "Generates a new API Key.  Requires a name, e.g. rake generate_api_key[YOUR_APP_NAME_HERE]"
 task :generate_api_key, [:name] => :environment do |t, args|
+  fail "Your environment does not allow API keys to be generated" if ENV["STITCHES_DISALLOW_GENERATE_API_KEY"]
   fail "You must provide a name" unless args.name
   api_client = ::ApiClient.create!(name: args.name)
   api_client.reload
