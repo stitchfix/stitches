@@ -115,7 +115,7 @@ describe Stitches::Configuration do
         config.whitelist_regexp = /foo/
       end
       expect(Stitches.configuration.allowlist_regexp).to eq(/foo/)
-      expect(logger).to have_received(:info).with(/'whitelist' is deprecated it stitches configuration, please use 'allowlist'/i)
+      expect(logger).to have_received(:info).with(/'whitelist' is deprecated in stitches configuration, please use 'allowlist'/i)
     end
   end
 end

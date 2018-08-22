@@ -27,7 +27,7 @@ class Stitches::Configuration
 
   def whitelist_regexp=(new_allowlist_regexp)
     self.allowlist_regexp = new_allowlist_regexp
-    Rails.logger.info("'whitelist' is deprecated it stitches configuration, please use 'allowlist'")
+    Rails.logger.info("'whitelist' is deprecated in stitches configuration, please use 'allowlist'")
   end
 
   # The name of your custom http auth scheme.  This must be set, and has no default
