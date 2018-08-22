@@ -2,7 +2,7 @@ require "spec_helper"
 require "fileutils"
 require "open3"
 
-RSpec.describe "Adding Stitches to a New Rails App" do
+RSpec.describe "Adding Stitches to a New Rails App", :integration do
   let(:work_dir) { Dir.mktmpdir }
   let(:rails_app_name) { "swamp-thing" }
 

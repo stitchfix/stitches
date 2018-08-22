@@ -1,4 +1,4 @@
-require_relative 'whitelisting_middleware'
+require_relative 'allowlist_middleware'
 
 module Stitches
   # A middleware that requires an API key for certain transactions, and makes its id available
@@ -18,7 +18,7 @@ module Stitches
   #
   # If that is the case, env[Stitches.configuration.env_var_to_hold_api_client_primary_key] will be the primary key of the
   # ApiClient that it maps to.
-  class ApiKey < Stitches::WhitelistingMiddleware
+  class ApiKey < Stitches::AllowlistMiddleware
 
     def initialize(app,options = {})
       super(app,options)

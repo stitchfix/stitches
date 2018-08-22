@@ -2,7 +2,7 @@ require 'stitches'
 
 Stitches.configure do |configuration|
   # Regexp of urls that do not require ApiKeys or valid, versioned mime types
-  configuration.whitelist_regexp = %r{\A/(resque|docs|assets)(\Z|/.*\Z)}
+  configuration.allowlist_regexp = %r{\A/(resque|docs|assets)(\Z|/.*\Z)}
 
   # Name of the custom Authorization scheme.  See http://www.ietf.org/rfc/rfc2617.txt for details,
   # but generally should be a string with no spaces or special characters.

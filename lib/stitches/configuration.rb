@@ -9,20 +9,25 @@ class Stitches::Configuration
 
   # Mainly for testing, this resets all configuration to the default value
   def reset_to_defaults!
-    @whitelist_regexp = nil
+    @allowlist_regexp = nil
     @custom_http_auth_scheme = UnsetString.new("custom_http_auth_scheme")
     @env_var_to_hold_api_client_primary_key = NonNullString.new("env_var_to_hold_api_client_primary_key","STITCHES_API_CLIENT_ID")
     @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client","STITCHES_API_CLIENT")
   end
 
-  # A RegExp that whitelists URLS around the mime type and api key requirements.
+  # A RegExp that allows URLS around the mime type and api key requirements.
   # nil means that ever request must have a proper mime type and api key.
-  attr_reader :whitelist_regexp
-  def whitelist_regexp=(new_whitelist_regexp)
-    unless new_whitelist_regexp.nil? || new_whitelist_regexp.is_a?(Regexp)
-      raise "whitelist_regexp must be a Regexp, not a #{new_whitelist_regexp.class}"
+  attr_reader :allowlist_regexp
+  def allowlist_regexp=(new_allowlist_regexp)
+    unless new_allowlist_regexp.nil? || new_allowlist_regexp.is_a?(Regexp)
+      raise "allowlist_regexp must be a Regexp, not a #{new_allowlist_regexp.class}"
     end
-    @whitelist_regexp = new_whitelist_regexp
+    @allowlist_regexp = new_allowlist_regexp
+  end
+
+  def whitelist_regexp=(new_allowlist_regexp)
+    self.allowlist_regexp = new_allowlist_regexp
+    Rails.logger.info("'whitelist' is deprecated it stitches configuration, please use 'allowlist'")
   end
 
   # The name of your custom http auth scheme.  This must be set, and has no default
