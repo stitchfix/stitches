@@ -2,7 +2,7 @@ require "spec_helper"
 require "fileutils"
 require "open3"
 
-RSpec.describe "Adding Stitches to a New Rails App" do
+RSpec.describe "Adding Stitches to a New Rails App", :integration do
   let(:work_dir) { Dir.mktmpdir }
   let(:rails_app_name) { "swamp-thing" }
 
@@ -101,6 +101,38 @@ RSpec.describe "Adding Stitches to a New Rails App" do
     }
 
     expect(include_line).to_not be_nil,lines.inspect
+  end
+
+  it "inserts can update old configuration" do
+    run "bin/rails generate rspec:install"
+    run "bin/rails generate apitome:install"
+    run "bin/rails generate stitches:api"
+
+    rails_root = Pathname(work_dir) / rails_app_name
+    initializer = rails_root / "config" / "initializers" / "stitches.rb"
+
+    initializer_contents = File.read(initializer).split(/\n/)
+    found_initializer = false
+    File.open(initializer,"w") do |file|
+      initializer_contents.each do |line|
+        if line =~ /allowlist/
+          line = line.gsub("allowlist","whitelist")
+          found_initializer = true
+        end
+        file.puts line
+      end
+    end
+
+    raise "Didn't find 'allowlist' in the initializer?!" if !found_initializer
+
+    run "bin/rails generate stitches:update_configuration"
+
+    lines =  File.read(initializer).split(/\n/)
+    include_line = lines.detect { |line|
+      line =~ /whitelist/
+    }
+
+    expect(include_line).to be_nil,lines.inspect
   end
 
   class RoutesFileAnalysis

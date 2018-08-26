@@ -49,7 +49,7 @@ describe Stitches::ApiKey do
 
   describe "#call" do
     context "not in namespace" do
-      context "not whitelisted" do
+      context "not allowlisted" do
         let(:env) {
           {
             "PATH_INFO" => "/index/apifoolingyou/home",
@@ -64,12 +64,12 @@ describe Stitches::ApiKey do
           let(:expected_body) { "Unauthorized - no authorization header" }
         end
       end
-      context "whitelisting" do
-        context "whitelist is explicit in middleware usage" do
+      context "allowlisting" do
+        context "allowlist is explicit in middleware usage" do
           before do
             @response = middleware.call(env)
           end
-          context "passes the whitelist" do
+          context "passes the allowlist" do
             subject(:middleware) { described_class.new(app, except: %r{\A/resque\/.*\Z}) }
             let(:env) {
               {
@@ -81,7 +81,7 @@ describe Stitches::ApiKey do
             end
           end
 
-          context "fails the whitelist" do
+          context "fails the allowlist" do
             subject(:middleware) { described_class.new(app, except: %r{\A/resque\/.*\Z}) }
             let(:env) {
               {
@@ -105,14 +105,14 @@ describe Stitches::ApiKey do
             end
           end
         end
-        context "whitelist is implicit from the configuration" do
+        context "allowlist is implicit from the configuration" do
 
           before do
-            Stitches.configuration.whitelist_regexp = %r{\A/resque/.*\Z}
+            Stitches.configuration.allowlist_regexp = %r{\A/resque/.*\Z}
             @response = middleware.call(env)
           end
 
-          context "passes the whitelist" do
+          context "passes the allowlist" do
             subject(:middleware) { described_class.new(app) }
             let(:env) {
               {
@@ -124,7 +124,7 @@ describe Stitches::ApiKey do
             end
           end
 
-          context "fails the whitelist" do
+          context "fails the allowlist" do
             subject(:middleware) { described_class.new(app) }
             let(:env) {
               {

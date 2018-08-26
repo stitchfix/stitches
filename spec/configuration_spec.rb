@@ -6,24 +6,24 @@ describe Stitches::Configuration do
   end
 
   describe "global configuration" do
-    let(:whitelist_regexp) { %r{foo} }
+    let(:allowlist_regexp) { %r{foo} }
     let(:custom_http_auth_scheme) { "Blah" }
     let(:env_var_to_hold_api_client_primary_key) { "FOOBAR" }
 
     it "can be configured globally" do
       Stitches.configure do |config|
-        config.whitelist_regexp                       = whitelist_regexp
+        config.allowlist_regexp                       = allowlist_regexp
         config.custom_http_auth_scheme                = custom_http_auth_scheme
         config.env_var_to_hold_api_client_primary_key = env_var_to_hold_api_client_primary_key
       end
 
-      expect(Stitches.configuration.whitelist_regexp).to                       eq(whitelist_regexp)
+      expect(Stitches.configuration.allowlist_regexp).to                       eq(allowlist_regexp)
       expect(Stitches.configuration.custom_http_auth_scheme).to                eq(custom_http_auth_scheme)
       expect(Stitches.configuration.env_var_to_hold_api_client_primary_key).to eq(env_var_to_hold_api_client_primary_key)
     end
 
-    it "defaults to nil for whitelist_regexp" do
-      expect(Stitches.configuration.whitelist_regexp).to be_nil
+    it "defaults to nil for allowlist_regexp" do
+      expect(Stitches.configuration.allowlist_regexp).to be_nil
     end
 
     it "sets a default for env_var_to_hold_api_client_primary_key" do
@@ -36,21 +36,21 @@ describe Stitches::Configuration do
       }.to raise_error(/you must set a value for custom_http_auth_scheme/i)
     end
   end
-  describe "whitelist_regexp" do
+  describe "allowlist_regexp" do
     let(:config) { Stitches::Configuration.new }
     it "must be a regexp" do
       expect {
-        config.whitelist_regexp = "foo"
-      }.to raise_error(/whitelist_regexp must be a Regexp/i)
+        config.allowlist_regexp = "foo"
+      }.to raise_error(/allowlist_regexp must be a Regexp/i)
     end
     it "may be nil" do
       expect {
-        config.whitelist_regexp = nil
+        config.allowlist_regexp = nil
       }.not_to raise_error
     end
     it "may be a regexp" do
       expect {
-        config.whitelist_regexp = /foo/
+        config.allowlist_regexp = /foo/
       }.not_to raise_error
     end
   end
@@ -100,6 +100,21 @@ describe Stitches::Configuration do
       expect {
         config.env_var_to_hold_api_client_primary_key = "Foobar"
       }.not_to raise_error
+    end
+  end
+  context "deprecated options we want to support for backwards compatibility" do
+
+    let(:logger) { double("logger") }
+    before do
+      allow(Rails).to receive(:logger).and_return(logger)
+      allow(logger).to receive(:info)
+    end
+
+    it "'whitelist' still works for allowlist" do
+      Stitches.configure do |config|
+        config.whitelist_regexp = /foo/
+      end
+      expect(Stitches.configuration.allowlist_regexp).to eq(/foo/)
     end
   end
 end

@@ -1,4 +1,4 @@
-require_relative 'whitelisting_middleware'
+require_relative 'allowlist_middleware'
 module Stitches
   # A middleware that requires all API calls to be for versioned JSON.  This means that the Accept
   # header (available to Rack apps as HTTP_ACCEPT) should be like so:
@@ -7,7 +7,7 @@ module Stitches
   #
   # This just checks that you've specified some numeric version.  ApiVersionConstraint should be used
   # to "lock down" the versions you accept.
-  class ValidMimeType < Stitches::WhitelistingMiddleware
+  class ValidMimeType < Stitches::AllowlistMiddleware
 
   protected
 

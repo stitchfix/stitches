@@ -23,7 +23,7 @@ describe Stitches::ValidMimeType do
 
   describe "#call" do
     context "not in namespace" do
-      context "not in whitelist" do
+      context "not in allowlist" do
         let(:env) {
           {
             "PATH_INFO" => "/index/home",
@@ -36,19 +36,19 @@ describe Stitches::ValidMimeType do
 
         it_behaves_like "an unacceptable response"
       end
-      context "whitelisting" do
+      context "allowlisting" do
         let(:env) {
           {
             "PATH_INFO" => "/index/home",
           }
         }
 
-        context "whitelist is explicit in middleware usage" do
+        context "allowlist is explicit in middleware usage" do
           before do
             @response = middleware.call(env)
           end
 
-          context "passes the whitelist" do
+          context "passes the allowlist" do
             subject(:middleware) { described_class.new(app, except: %r{\A/resque\/.*\Z}) }
             let(:env) {
               {
@@ -60,7 +60,7 @@ describe Stitches::ValidMimeType do
             end
           end
 
-          context "fails the whitelist" do
+          context "fails the allowlist" do
             subject(:middleware) { described_class.new(app, except: %r{\A/resque\/.*\Z}) }
             let(:env) {
               {
@@ -82,14 +82,14 @@ describe Stitches::ValidMimeType do
             end
           end
         end
-        context "whitelist is implicit from the configuration" do
+        context "allowlist is implicit from the configuration" do
 
           before do
-            Stitches.configuration.whitelist_regexp = %r{\A/resque/.*\Z}
+            Stitches.configuration.allowlist_regexp = %r{\A/resque/.*\Z}
             @response = middleware.call(env)
           end
 
-          context "passes the whitelist" do
+          context "passes the allowlist" do
             subject(:middleware) { described_class.new(app) }
             let(:env) {
               {
@@ -101,7 +101,7 @@ describe Stitches::ValidMimeType do
             end
           end
 
-          context "fails the whitelist" do
+          context "fails the allowlist" do
             subject(:middleware) { described_class.new(app) }
             let(:env) {
               {
