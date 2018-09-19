@@ -2,7 +2,7 @@ class Api::ApiController < ActionController::Base
   include Stitches::Deprecation
   #
   # The order of the rescue_from blocks is important - ActiveRecord::RecordNotFound must come after StandardError,
-  # otherwise "not_found" errors will get rescued in the StandardError block.
+  # otherwise ActiveRecord::RecordNotFound exceptions will get rescued in the StandardError block.
   # See the documentation for rescue_from for further explanation:
   # https://apidock.com/rails/ActiveSupport/Rescuable/ClassMethods/rescue_from
   # Specifically, this part: "Handlers are inherited. They are searched from right to left, from bottom to top, and up
@@ -13,7 +13,7 @@ class Api::ApiController < ActionController::Base
   end
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
-    render json: { errors: Stitches::Errors.new([ Stitches::Error.new(code: "not_found", message: exception.message) ]) }, status: :not_found
+    render json: { errors: Stitches::Errors.from_exception(exception) }, status: :not_found
   end
 
   def current_user
