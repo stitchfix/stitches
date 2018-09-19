@@ -9,7 +9,6 @@ class Api::ApiController < ActionController::Base
   # the hierarchy."
   #
   rescue_from StandardError do |exception|
-    Bugsnag.notify(exception)
     render json: { errors: Stitches::Errors.from_exception(exception) }, status: :internal_server_error
   end
 

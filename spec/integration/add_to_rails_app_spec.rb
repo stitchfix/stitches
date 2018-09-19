@@ -75,6 +75,8 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
       expect(File.read(rails_root / "spec" / "rails_helper.rb")).to include("require 'rspec_api_documentation'")
       expect(File.read(rails_root / "config" / "initializers" / "apitome.rb")).to include("config.mount_at = nil")
       expect(File.read(rails_root / "config" / "initializers" / "apitome.rb")).to include("config.title = 'Service Documentation'")
+      expect(File.read(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to include("rescue_from StandardError")
+      expect(File.read(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to include("rescue_from ActiveRecord::RecordNotFound")
     end
   end
 
