@@ -118,5 +118,3 @@ any fancy refactors here, just keep it up to date.
 ---
 
 Provided with love by your friends at [Stitch Fix Engineering](http://technology.stitchfix.com)
-
-![stitches](https://s3.amazonaws.com/stitchfix-stitches/stitches.png)
