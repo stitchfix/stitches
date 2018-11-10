@@ -100,7 +100,7 @@ See [the wiki](https://github.com/stitchfix/stitches/wiki/Setup) for how to setu
   - Deprecation using the `Sunset` header
 * The [Generator](https://github.com/stitchfix/stitches/wiki/Generator) sets up some code in your app, so you can start writing
 APIs using vanilla Rails idioms:
-  - a "ping" controller that can vaidate your app is working
+  - a "ping" controller that can validate your app is working
   - version routing based on content-type (requests for V2 use the same URL, but are serviced by a different controller)
   - An ApiClient Active Record
   - Acceptance tests that can produce API documentation as they test your app.
