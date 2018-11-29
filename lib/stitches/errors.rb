@@ -70,7 +70,7 @@ module Stitches
     def self.from_active_record_object(object)
       errors = object.errors.to_hash.map { |field,errors|
         code = "#{field}_invalid".parameterize
-        message = if object.send(field).respond_to?(:errors)
+        message = if object.respond_to?(field) && object.send(field).respond_to?(:errors)
                     object.send(field).errors.full_messages.sort.join(', ')
                   else
                     object.errors.full_messages_for(field).sort.join(', ')

@@ -94,6 +94,13 @@ describe Stitches::Errors do
       expect(errors_hash[1]["code"]).to eq("person_invalid")
       expect(errors_hash[1]["message"]).to eq("Age is not a number, First name can't be blank, Last name starts with z.")
     end
+
+    it "works with nested attributes" do
+      object.errors.add("something.nested", "is required")
+      errors = Stitches::Errors.from_active_record_object(object)
+      errors_hash = JSON.parse(errors.to_json).sort_by {|_| _["code"] }
+      expect(errors_hash[0]["code"]).to eq("something-nested_invalid")
+      expect(errors_hash[0]["message"]).to eq("Something nested is required")
+    end
   end
 end
-
