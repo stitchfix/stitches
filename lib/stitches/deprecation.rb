@@ -19,7 +19,7 @@ module Stitches
     #     end
     def deprecated(gone_on:,&block)
       response.set_header("Sunset",Date.parse(gone_on).in_time_zone("GMT").midnight.strftime("%a, %e %b %Y %H:%M:%S %Z"))
-      Rails.logger.info("Deprecated endpoint #{request.method} #{request.fullpath} requested by #{current_user.id}")
+      Rails.logger.info("DEPRECATED ENDPOINT #{request.method} to #{request.fullpath} requested by #{current_user.id}")
       block.()
     end
   end
