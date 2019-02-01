@@ -32,7 +32,7 @@ describe Stitches::Deprecation do
     end
     it "logs about the request and current API key id" do
       fake_controller.deprecated(gone_on: "2018-01-01") {}
-      expect(logger).to have_received(:info).with(/deprecated.*#{Regexp.escape(request.method)}.*#{Regexp.escape(request.fullpath)}.*#{Regexp.escape(api_client.id.to_s)}/i)
+      expect(logger).to have_received(:info).with(/DEPRECATED.*#{Regexp.escape(request.method)}.*#{Regexp.escape(request.fullpath)}.*#{Regexp.escape(api_client.id.to_s)}/i)
     end
     it "executes and returns the block" do
       block_executed = false
