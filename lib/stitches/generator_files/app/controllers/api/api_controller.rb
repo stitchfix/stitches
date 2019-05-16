@@ -1,4 +1,11 @@
 class Api::ApiController < ActionController::Base
+  #
+  # API clients pass an API key instead of a CSRF token; Use
+  # :null_session CSRF protection to avoid an auth error for these
+  # clients.
+  #
+  protect_from_forgery with: :null_session
+
   include Stitches::Deprecation
   #
   # The order of the rescue_from blocks is important - ActiveRecord::RecordNotFound must come after StandardError,
