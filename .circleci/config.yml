@@ -3,9 +3,22 @@
 ---
 version: 2
 jobs:
-  ruby-2.6.1-rails-5.2:
+  release:
     docker:
-    - image: circleci/ruby:2.6.1
+    - image: circleci/ruby:2.6.3
+    steps:
+    - checkout
+    - run: bundle install --full-index
+    - run:
+        name: Artifactory login
+        command: mkdir -p ~/.gem && curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN https://stitchfix01.jfrog.io/stitchfix01/api/gems/eng-gems/api/v1/api_key.yaml
+          > ~/.gem/credentials && chmod 0600 ~/.gem/credentials
+    - run:
+        name: Build/release gem to artifactory
+        command: bundle exec rake push_artifactory
+  ruby-2.6.3-rails-5.2:
+    docker:
+    - image: circleci/ruby:2.6.3
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-5.2
     working_directory: "~/stitches"
@@ -20,13 +33,13 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: 'bundle exec y-notify #eng-platform'
+        command: bundle exec y-notify "#eng-platform"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.5.3-rails-5.2:
+  ruby-2.5.5-rails-5.2:
     docker:
-    - image: circleci/ruby:2.5.3
+    - image: circleci/ruby:2.5.5
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-5.2
     working_directory: "~/stitches"
@@ -41,13 +54,13 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: 'bundle exec y-notify #eng-platform'
+        command: bundle exec y-notify "#eng-platform"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.6.1-rails-5.1:
+  ruby-2.6.3-rails-5.1:
     docker:
-    - image: circleci/ruby:2.6.1
+    - image: circleci/ruby:2.6.3
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-5.1
     working_directory: "~/stitches"
@@ -62,13 +75,13 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: 'bundle exec y-notify #eng-platform'
+        command: bundle exec y-notify "#eng-platform"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.5.3-rails-5.1:
+  ruby-2.5.5-rails-5.1:
     docker:
-    - image: circleci/ruby:2.5.3
+    - image: circleci/ruby:2.5.5
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-5.1
     working_directory: "~/stitches"
@@ -83,7 +96,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: 'bundle exec y-notify #eng-platform'
+        command: bundle exec y-notify "#eng-platform"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -91,14 +104,38 @@ workflows:
   version: 2
   on-commit:
     jobs:
-    - ruby-2.6.1-rails-5.2:
+    - release:
         context: org-global
-    - ruby-2.5.3-rails-5.2:
+        requires:
+        - ruby-2.6.3-rails-5.2
+        - ruby-2.5.5-rails-5.2
+        - ruby-2.6.3-rails-5.1
+        - ruby-2.5.5-rails-5.1
+        filters:
+          tags:
+            only: /^[0-9]+\.[0-9]+\.[0-9](\.RC\d*)?$/
+          branches:
+            ignore: /.*/
+    - ruby-2.6.3-rails-5.2:
         context: org-global
-    - ruby-2.6.1-rails-5.1:
+        filters:
+          tags:
+            only: &1 /.*/
+    - ruby-2.5.5-rails-5.2:
         context: org-global
-    - ruby-2.5.3-rails-5.1:
+        filters:
+          tags:
+            only: *1
+    - ruby-2.6.3-rails-5.1:
         context: org-global
+        filters:
+          tags:
+            only: *1
+    - ruby-2.5.5-rails-5.1:
+        context: org-global
+        filters:
+          tags:
+            only: *1
   scheduled:
     triggers:
     - schedule:
@@ -108,11 +145,11 @@ workflows:
             only:
             - master
     jobs:
-    - ruby-2.6.1-rails-5.2:
+    - ruby-2.6.3-rails-5.2:
         context: org-global
-    - ruby-2.5.3-rails-5.2:
+    - ruby-2.5.5-rails-5.2:
         context: org-global
-    - ruby-2.6.1-rails-5.1:
+    - ruby-2.6.3-rails-5.1:
         context: org-global
-    - ruby-2.5.3-rails-5.1:
+    - ruby-2.5.5-rails-5.1:
         context: org-global
