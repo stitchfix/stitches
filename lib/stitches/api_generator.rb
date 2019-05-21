@@ -14,7 +14,6 @@ module Stitches
     def bootstrap_api
       inject_into_file "Gemfile", after: /^gem ['"]rails['"].*$/ do<<-GEM
 
-gem "apitome"
 gem "responders"
 gem "rspec_api_documentation", group: [ :development, :test ]
 gem "capybara", group: [ :development, :test ]
@@ -32,10 +31,6 @@ namespace :api do
     # as well as for your client to be able to validate this as well.
   end
 end
-api_docs = Rack::Auth::Basic.new(Apitome::Engine ) do |_,password|
-  password == ENV['HTTP_AUTH_PASSWORD']
-end
-mount api_docs, at: "docs"
       ROUTES
       end
 
@@ -86,10 +81,6 @@ config.api_name = "YOUR SERVICE NAME HERE"
 end
       RSPEC_API
       end
-      run "rails g apitome:install"
-      gsub_file 'config/initializers/apitome.rb', /config.mount_at = .*$/, "config.mount_at = nil"
-      gsub_file 'config/initializers/apitome.rb', /config.title = .*$/, "config.title = 'Service Documentation'"
-
     end
   end
 end
