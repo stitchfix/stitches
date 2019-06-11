@@ -8,8 +8,8 @@ jobs:
     - image: circleci/ruby:2.6.3
     steps:
     - checkout
-    - run: bundle install --full-index
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
+    - run: bundle install --full-index
     - run:
         name: Artifactory login
         command: mkdir -p ~/.gem && curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN https://stitchfix01.jfrog.io/stitchfix01/api/gems/eng-gems/api/v1/api_key.yaml
