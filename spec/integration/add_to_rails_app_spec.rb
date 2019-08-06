@@ -7,7 +7,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
   let(:rails_app_name) { "swamp-thing" }
 
   def run(command)
-    stdout, stderr, stat = Bundler.with_original_env { Open3.capture3({ 'BUNDLE_GEMFILE' => 'Gemfile' }, command) }
+    stdout, stderr, stat = Bundler.with_clean_env { Open3.capture3({ 'BUNDLE_GEMFILE' => 'Gemfile' }, command) }
     success = stat.success? && stdout !~ /Could not find generator/im
 
     if ENV["DEBUG"] == 'true' || !success
@@ -48,6 +48,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
       FileUtils.chdir rails_app_name do
         run use_local_stitches
         run "bundle install"
+        run "gem install apitome responders rspec-rails rspec_api_documentation"
         example.run
       end
     end
