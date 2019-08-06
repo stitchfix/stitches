@@ -7,7 +7,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
   let(:rails_app_name) { "swamp-thing" }
 
   def run(command)
-    stdout, stderr, stat = Bundler.with_original_env { Open3.capture3(command) }
+    stdout, stderr, stat = Bundler.with_original_env { Open3.capture3({ 'BUNDLE_GEMFILE' => 'Gemfile' }, command) }
     success = stat.success? && stdout !~ /Could not find generator/im
 
     if ENV["DEBUG"] == 'true' || !success

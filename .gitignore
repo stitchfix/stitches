@@ -9,4 +9,5 @@ config/database.yml
 .jhw-cache
 **.orig
 Gemfile.lock
+Gemfile.*.lock
 .projections.json
