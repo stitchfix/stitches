@@ -49,6 +49,8 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
 
         FileUtils.chdir rails_app_name do
           run use_local_stitches
+          # It's unclear why, but on CI the gems are not found when installed
+          # through bundler however installing them explicitly first fixes it.
           run "gem install apitome rspec-rails rspec_api_documentation"
           run "bundle install"
           example.run
