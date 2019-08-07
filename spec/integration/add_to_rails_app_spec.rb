@@ -5,9 +5,10 @@ require "open3"
 RSpec.describe "Adding Stitches to a New Rails App", :integration do
   let(:work_dir) { Dir.mktmpdir }
   let(:rails_app_name) { "swamp-thing" }
+  let(:rails_root) { Pathname(work_dir) / rails_app_name }
 
   def run(command)
-    stdout, stderr, stat = Bundler.with_clean_env { Open3.capture3({ 'BUNDLE_GEMFILE' => 'Gemfile' }, command) }
+    stdout, stderr, stat = Open3.capture3({ 'BUNDLE_GEMFILE' => rails_root.join('Gemfile').to_path }, command)
     success = stat.success? && stdout !~ /Could not find generator/im
 
     if ENV["DEBUG"] == 'true' || !success
@@ -42,22 +43,22 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     gem_path = File.expand_path("../..", File.dirname(__FILE__))
     use_local_stitches = %{echo "gem 'stitches', path: '#{gem_path}'" >> Gemfile}
 
-    FileUtils.chdir work_dir do
-      run rails_new
+    Bundler.with_clean_env do
+      FileUtils.chdir work_dir do
+        run rails_new
 
-      FileUtils.chdir rails_app_name do
-        run use_local_stitches
-        run "bundle install"
-        run "gem install apitome responders rspec-rails rspec_api_documentation"
-        example.run
+        FileUtils.chdir rails_app_name do
+          run use_local_stitches
+          run "gem install apitome responders rspec-rails rspec_api_documentation"
+          run "bundle install"
+          example.run
+        end
       end
     end
   end
 
   it "works as described in the README" do
     run "bin/rails generate stitches:api"
-
-    rails_root = Pathname(work_dir) / rails_app_name
 
     # Yuck!  So much duplication!  BUT: Rails app templates have a notoriously silent failure mode, so mostly
     # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens 
@@ -89,8 +90,6 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
 
   it "inserts the deprecation module into ApiController" do
     run "bin/rails generate stitches:api"
-
-    rails_root = Pathname(work_dir) / rails_app_name
     api_controller = rails_root / "app" / "controllers" / "api" / "api_controller.rb"
 
     api_controller_contents = File.read(api_controller).split(/\n/)
@@ -113,7 +112,6 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
   it "inserts can update old configuration" do
     run "bin/rails generate stitches:api"
 
-    rails_root = Pathname(work_dir) / rails_app_name
     initializer = rails_root / "config" / "initializers" / "stitches.rb"
 
     initializer_contents = File.read(initializer).split(/\n/)
