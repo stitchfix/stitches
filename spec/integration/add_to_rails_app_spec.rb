@@ -49,7 +49,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
 
         FileUtils.chdir rails_app_name do
           run use_local_stitches
-          run "gem install apitome responders rspec-rails rspec_api_documentation"
+          run "gem install apitome rspec-rails rspec_api_documentation"
           run "bundle install"
           example.run
         end
@@ -68,9 +68,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     aggregate_failures do
       expect(File.exist?(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to eq(true)
       expect(rails_root / "Gemfile").to contain_gem("apitome")
-      expect(rails_root / "Gemfile").to contain_gem("responders")
       expect(rails_root / "Gemfile").to contain_gem("rspec_api_documentation")
-      expect(rails_root / "Gemfile").to contain_gem("capybara")
       expect(rails_root / "config" / "routes.rb").to have_route(namespace: :api, module_scope: :v1, resource: 'ping')
       expect(rails_root / "config" / "routes.rb").to have_route(namespace: :api, module_scope: :v2, resource: 'ping')
       expect(rails_root / "config" / "routes.rb").to have_mounted_engine("Apitome::Engine")

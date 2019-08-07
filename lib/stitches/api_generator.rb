@@ -14,7 +14,6 @@ module Stitches
     def bootstrap_api
       gem "stitches"
       gem "apitome"
-      gem "responders"
       gem_group :development, :test do
         gem "rspec"
         gem "rspec-rails"
