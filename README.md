@@ -29,8 +29,6 @@ bundle install
 Then, set it up:
 
 ```
-> bin/rails generate rspec:install
-> bin/rails generate apitome:install
 > bin/rails generate stitches:api
 > bundle exec rake db:migrate
 ```

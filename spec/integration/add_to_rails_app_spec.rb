@@ -5,9 +5,10 @@ require "open3"
 RSpec.describe "Adding Stitches to a New Rails App", :integration do
   let(:work_dir) { Dir.mktmpdir }
   let(:rails_app_name) { "swamp-thing" }
+  let(:rails_root) { Pathname(work_dir) / rails_app_name }
 
   def run(command)
-    stdout, stderr, stat = Open3.capture3(command)
+    stdout, stderr, stat = Open3.capture3({ 'BUNDLE_GEMFILE' => rails_root.join('Gemfile').to_path }, command)
     success = stat.success? && stdout !~ /Could not find generator/im
 
     if ENV["DEBUG"] == 'true' || !success
@@ -37,20 +38,29 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
       "--no-rc",
       "--skip-bundle",
     ].join(" ")
-    FileUtils.chdir work_dir do
-      run rails_new
-      FileUtils.chdir rails_app_name do
-        example.run
+
+    # Use this local version of stitches rather than the one on Rubygems
+    gem_path = File.expand_path("../..", File.dirname(__FILE__))
+    use_local_stitches = %{echo "gem 'stitches', path: '#{gem_path}'" >> Gemfile}
+
+    Bundler.with_clean_env do
+      FileUtils.chdir work_dir do
+        run rails_new
+
+        FileUtils.chdir rails_app_name do
+          run use_local_stitches
+          # It's unclear why, but on CI the gems are not found when installed
+          # through bundler however installing them explicitly first fixes it.
+          run "gem install apitome rspec-rails rspec_api_documentation"
+          run "bundle install"
+          example.run
+        end
       end
     end
   end
 
   it "works as described in the README" do
-    run "bin/rails generate rspec:install"
-    run "bin/rails generate apitome:install"
     run "bin/rails generate stitches:api"
-
-    rails_root = Pathname(work_dir) / rails_app_name
 
     # Yuck!  So much duplication!  BUT: Rails app templates have a notoriously silent failure mode, so mostly
     # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens 
@@ -60,9 +70,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     aggregate_failures do
       expect(File.exist?(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to eq(true)
       expect(rails_root / "Gemfile").to contain_gem("apitome")
-      expect(rails_root / "Gemfile").to contain_gem("responders")
       expect(rails_root / "Gemfile").to contain_gem("rspec_api_documentation")
-      expect(rails_root / "Gemfile").to contain_gem("capybara")
       expect(rails_root / "config" / "routes.rb").to have_route(namespace: :api, module_scope: :v1, resource: 'ping')
       expect(rails_root / "config" / "routes.rb").to have_route(namespace: :api, module_scope: :v2, resource: 'ping')
       expect(rails_root / "config" / "routes.rb").to have_mounted_engine("Apitome::Engine")
@@ -81,11 +89,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
   end
 
   it "inserts the deprecation module into ApiController" do
-    run "bin/rails generate rspec:install"
-    run "bin/rails generate apitome:install"
     run "bin/rails generate stitches:api"
-
-    rails_root = Pathname(work_dir) / rails_app_name
     api_controller = rails_root / "app" / "controllers" / "api" / "api_controller.rb"
 
     api_controller_contents = File.read(api_controller).split(/\n/)
@@ -106,11 +110,8 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
   end
 
   it "inserts can update old configuration" do
-    run "bin/rails generate rspec:install"
-    run "bin/rails generate apitome:install"
     run "bin/rails generate stitches:api"
 
-    rails_root = Pathname(work_dir) / rails_app_name
     initializer = rails_root / "config" / "initializers" / "stitches.rb"
 
     initializer_contents = File.read(initializer).split(/\n/)

@@ -4,7 +4,7 @@ module Stitches
   class ApiGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
-    source_root(File.expand_path(File.join(File.dirname(__FILE__),"generator_files")))
+    source_root(File.expand_path(File.join(File.dirname(__FILE__), "generator_files")))
 
     def self.next_migration_number(path)
       Time.now.utc.strftime("%Y%m%d%H%M%S")
@@ -12,14 +12,21 @@ module Stitches
 
     desc "Bootstraps your API service with a basic ping controller and spec to ensure everything is setup properly"
     def bootstrap_api
-      inject_into_file "Gemfile", after: /^gem ['"]rails['"].*$/ do<<-GEM
-
-gem "apitome"
-gem "responders"
-gem "rspec_api_documentation", group: [ :development, :test ]
-gem "capybara", group: [ :development, :test ]
-      GEM
+      gem "stitches"
+      gem "apitome"
+      gem_group :development, :test do
+        gem "rspec"
+        gem "rspec-rails"
+        gem "rspec_api_documentation"
       end
+
+      run "bundle install"
+      generate "apitome:install"
+      generate "rspec:install"
+
+      gsub_file 'config/initializers/apitome.rb', /config.mount_at = .*$/, "config.mount_at = nil"
+      gsub_file 'config/initializers/apitome.rb', /config.title = .*$/, "config.title = 'Service Documentation'"
+
       inject_into_file "config/routes.rb", before: /^end/ do<<-ROUTES
 namespace :api do
   scope module: :v1, constraints: Stitches::ApiVersionConstraint.new(1) do
@@ -32,14 +39,13 @@ namespace :api do
     # as well as for your client to be able to validate this as well.
   end
 end
-api_docs = Rack::Auth::Basic.new(Apitome::Engine ) do |_,password|
+
+api_docs = Rack::Auth::Basic.new(Apitome::Engine) do |_, password|
   password == ENV['HTTP_AUTH_PASSWORD']
 end
 mount api_docs, at: "docs"
       ROUTES
       end
-
-      run 'bundle install'
 
       copy_file "app/controllers/api.rb"
       copy_file "app/controllers/api/api_controller.rb"
@@ -52,8 +58,6 @@ mount api_docs, at: "docs"
       copy_file "lib/tasks/generate_api_key.rake"
       template "spec/features/api_spec.rb.erb", "spec/features/api_spec.rb"
       copy_file "spec/acceptance/ping_v1_spec.rb", "spec/acceptance/ping_v1_spec.rb"
-
-      run 'bundle install'
 
       migration_template "db/migrate/enable_uuid_ossp_extension.rb", "db/migrate/enable_uuid_ossp_extension.rb"
       sleep 1 # allow clock to tick so we get different numbers
@@ -70,26 +74,23 @@ require 'stitches/spec'
 
       append_to_file 'spec/rails_helper.rb' do<<-RSPEC_API
 require 'rspec_api_documentation'
-RspecApiDocumentation.configure do |config|
-config.format = :json
-config.request_headers_to_include = %w(
-  Accept
-  Content-Type
-  Authorization
-  If-Modified-Since
-)
-config.response_headers_to_include = %w(
-  Last-Modified
-  ETag
-)
-config.api_name = "YOUR SERVICE NAME HERE"
-end
-      RSPEC_API
-      end
-      run "rails g apitome:install"
-      gsub_file 'config/initializers/apitome.rb', /config.mount_at = .*$/, "config.mount_at = nil"
-      gsub_file 'config/initializers/apitome.rb', /config.title = .*$/, "config.title = 'Service Documentation'"
 
+RspecApiDocumentation.configure do |config|
+  config.format = :json
+  config.request_headers_to_include = %w(
+    Accept
+    Content-Type
+    Authorization
+    If-Modified-Since
+  )
+  config.response_headers_to_include = %w(
+    Last-Modified
+    ETag
+  )
+  config.api_name = "YOUR SERVICE NAME HERE"
+end
+RSPEC_API
+      end
     end
   end
 end
