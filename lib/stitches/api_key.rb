@@ -22,7 +22,7 @@ module Stitches
 
     def initialize(app,options = {})
       super(app,options)
-      @realm = Rails.application.class.parent.to_s
+      @realm = Rails.application.class.module_parent.to_s
     end
 
   protected
