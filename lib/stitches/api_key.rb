@@ -22,7 +22,7 @@ module Stitches
 
     def initialize(app,options = {})
       super(app,options)
-      @realm = Rails.application.class.module_parent.to_s
+      @realm = rails_app_module
     end
 
   protected
@@ -56,6 +56,12 @@ module Stitches
     end
 
   private
+
+    def rails_app_module
+      application_class = Rails.application.class
+      parent = application_class.try(:module_parent) || application_class.parent
+      parent.to_s
+    end
 
     class UnauthorizedResponse < Rack::Response
       def initialize(reason,realm,custom_http_auth_scheme)
