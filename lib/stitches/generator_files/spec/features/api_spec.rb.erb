@@ -123,14 +123,22 @@ feature "general API stuff" do
     failure_message do
       correct_code,_ = evaluate_response(response)
       if correct_code
-        "Expected WWW-Authenticate header to be 'CustomKeyAuth realm=#{Rails.application.class.parent.to_s}', but was #{response['WWW-Authenticate']}"
+        "Expected WWW-Authenticate header to be 'CustomKeyAuth realm=#{realm}', but was #{response['WWW-Authenticate']}"
       else
         "Expected response to be 401, but was #{response.response_code}"
       end
     end
 
+    def realm
+<% if ::Rails::VERSION::MAJOR >= 6 -%>
+     Rails.application.class.module_parent.to_s
+<% else %>
+     Rails.application.class.parent.to_s
+<% end %>
+    end
+
     def evaluate_response(response)
-      [response.response_code == 401, response.headers["WWW-Authenticate"] == "CustomKeyAuth realm=#{Rails.application.class.parent.to_s}" ]
+      [response.response_code == 401, response.headers["WWW-Authenticate"] == "CustomKeyAuth realm=#{realm}"]
     end
   end
 end
