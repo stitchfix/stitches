@@ -22,7 +22,7 @@ module Stitches
 
     def initialize(app,options = {})
       super(app,options)
-      @realm = Rails.application.class.parent.to_s
+      @realm = rails_app_module
     end
 
   protected
@@ -56,6 +56,17 @@ module Stitches
     end
 
   private
+
+    # TODO: (jdlubrano)
+    # Once Rails 5 support is no longer necessary, we can simply call
+    # Rails.application.class.module_parent.  The module_parent method
+    # does not exist in Rails <= 5, though, so we need to gracefully fallback
+    # Rails.application.class.parent for Rails versions predating Rails 6.0.0.
+    def rails_app_module
+      application_class = Rails.application.class
+      parent = application_class.try(:module_parent) || application_class.parent
+      parent.to_s
+    end
 
     class UnauthorizedResponse < Rack::Response
       def initialize(reason,realm,custom_http_auth_scheme)
