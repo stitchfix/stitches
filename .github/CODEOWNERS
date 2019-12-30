@@ -8,4 +8,4 @@
 # This file uses the GitHub CODEOWNERS convention to assign PR reviewers:
 # https://help.github.com/articles/about-codeowners/
 
-* @brettfishman @bwebster
+* @brettfishman @bwebster @stitchfix/devex
