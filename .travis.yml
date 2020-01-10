@@ -5,3 +5,6 @@ rvm:
   - ruby-head
 notifications:
   email: false
+jobs:
+  allow_failures:
+    - rvm: ruby-head
