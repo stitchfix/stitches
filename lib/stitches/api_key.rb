@@ -68,11 +68,20 @@ module Stitches
       parent.to_s
     end
 
-    class UnauthorizedResponse < Rack::Response
-      alias to_ary finish
+    class UnauthorizedResponse
 
-      def initialize(reason,realm,custom_http_auth_scheme)
-        super("Unauthorized - #{reason}", 401, { "WWW-Authenticate" => "#{custom_http_auth_scheme} realm=#{realm}" })
+      attr_accessor :status, :body
+      attr_reader :header
+      alias headers header
+
+      def initialize(reason, realm, custom_http_auth_scheme)
+        @status = 401
+        @header = Rack::Utils::HeaderHash.new({ "WWW-Authenticate" => "#{custom_http_auth_scheme} realm=#{realm}" })
+        @body = ["Unauthorized - #{reason}"]
+      end
+
+      def to_ary
+        [status, headers, body]
       end
     end
 

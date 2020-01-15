@@ -166,7 +166,6 @@ describe Stitches::ApiKey do
     context "unauthorized responses" do
       before do
         @response = middleware.call(env)
-        @response.finish
       end
       context "invalid key" do
         let(:env) {
