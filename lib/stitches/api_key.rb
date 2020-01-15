@@ -69,6 +69,8 @@ module Stitches
     end
 
     class UnauthorizedResponse < Rack::Response
+      alias to_ary finish
+
       def initialize(reason,realm,custom_http_auth_scheme)
         super("Unauthorized - #{reason}", 401, { "WWW-Authenticate" => "#{custom_http_auth_scheme} realm=#{realm}" })
       end
