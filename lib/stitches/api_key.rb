@@ -45,13 +45,13 @@ module Stitches
             env[@configuration.env_var_to_hold_api_client] = client
             @app.call(env)
           else
-            UnauthorizedResponse.new("key invalid",@realm,@configuration.custom_http_auth_scheme)
+            unauthorized_response("key invalid")
           end
         else
-          UnauthorizedResponse.new("bad authorization type",@realm,@configuration.custom_http_auth_scheme)
+          unauthorized_response("bad authorization type")
         end
       else
-        UnauthorizedResponse.new("no authorization header",@realm,@configuration.custom_http_auth_scheme)
+        unauthorized_response("no authorization header")
       end
     end
 
@@ -68,21 +68,11 @@ module Stitches
       parent.to_s
     end
 
-    class UnauthorizedResponse
-
-      attr_accessor :status, :body
-      attr_reader :header
-      alias headers header
-
-      def initialize(reason, realm, custom_http_auth_scheme)
-        @status = 401
-        @header = Rack::Utils::HeaderHash.new({ "WWW-Authenticate" => "#{custom_http_auth_scheme} realm=#{realm}" })
-        @body = ["Unauthorized - #{reason}"]
-      end
-
-      def to_ary
-        [status, headers, body]
-      end
+    def unauthorized_response(reason)
+      status = 401
+      body = "Unauthorized - #{reason}"
+      header = { "WWW-Authenticate" => "#{@configuration.custom_http_auth_scheme} realm=#{@realm}" }
+      Rack::Response.new(body, status, header).finish
     end
 
   end
