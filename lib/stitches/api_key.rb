@@ -20,11 +20,6 @@ module Stitches
   # ApiClient that it maps to.
   class ApiKey < Stitches::AllowlistMiddleware
 
-    def initialize(app,options = {})
-      super(app,options)
-      @realm = rails_app_module
-    end
-
   protected
 
     def do_call(env)
@@ -71,7 +66,7 @@ module Stitches
     def unauthorized_response(reason)
       status = 401
       body = "Unauthorized - #{reason}"
-      header = { "WWW-Authenticate" => "#{@configuration.custom_http_auth_scheme} realm=#{@realm}" }
+      header = { "WWW-Authenticate" => "#{@configuration.custom_http_auth_scheme} realm=#{rails_app_module}" }
       Rack::Response.new(body, status, header).finish
     end
 
