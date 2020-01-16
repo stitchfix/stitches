@@ -34,16 +34,19 @@ describe Stitches::ApiKey do
 
   shared_examples "an unauthorized response" do
     it "returns a 401" do
-      expect(@response.status).to eq(401)
+      status, _headers, _body = @response
+      expect(status).to eq(401)
     end
     it "sets the proper header" do
-      expect(@response.headers["WWW-Authenticate"]).to eq("MyAwesomeInternalScheme realm=MyApp")
+      _status, headers, _body = @response
+      expect(headers["WWW-Authenticate"]).to eq("MyAwesomeInternalScheme realm=MyApp")
     end
     it "stops the call chain preventing anything from happening" do
       expect(app).not_to have_received(:call)
     end
     it "sends a reasonable message" do
-      expect(@response.body).to eq([expected_body])
+      _status, _headers, body = @response
+      expect(body).to eq([expected_body])
     end
   end
 
@@ -166,7 +169,6 @@ describe Stitches::ApiKey do
     context "unauthorized responses" do
       before do
         @response = middleware.call(env)
-        @response.finish
       end
       context "invalid key" do
         let(:env) {

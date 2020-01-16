@@ -20,11 +20,6 @@ module Stitches
   # ApiClient that it maps to.
   class ApiKey < Stitches::AllowlistMiddleware
 
-    def initialize(app,options = {})
-      super(app,options)
-      @realm = rails_app_module
-    end
-
   protected
 
     def do_call(env)
@@ -45,13 +40,13 @@ module Stitches
             env[@configuration.env_var_to_hold_api_client] = client
             @app.call(env)
           else
-            UnauthorizedResponse.new("key invalid",@realm,@configuration.custom_http_auth_scheme)
+            unauthorized_response("key invalid")
           end
         else
-          UnauthorizedResponse.new("bad authorization type",@realm,@configuration.custom_http_auth_scheme)
+          unauthorized_response("bad authorization type")
         end
       else
-        UnauthorizedResponse.new("no authorization header",@realm,@configuration.custom_http_auth_scheme)
+        unauthorized_response("no authorization header")
       end
     end
 
@@ -68,10 +63,11 @@ module Stitches
       parent.to_s
     end
 
-    class UnauthorizedResponse < Rack::Response
-      def initialize(reason,realm,custom_http_auth_scheme)
-        super("Unauthorized - #{reason}", 401, { "WWW-Authenticate" => "#{custom_http_auth_scheme} realm=#{realm}" })
-      end
+    def unauthorized_response(reason)
+      status = 401
+      body = "Unauthorized - #{reason}"
+      header = { "WWW-Authenticate" => "#{@configuration.custom_http_auth_scheme} realm=#{rails_app_module}" }
+      Rack::Response.new(body, status, header).finish
     end
 
   end

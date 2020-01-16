@@ -11,13 +11,15 @@ describe Stitches::ValidMimeType do
 
   shared_examples "an unacceptable response" do
     it "returns a 406" do
-      expect(@response.status).to eq(406)
+      status, _headers, _body = @response
+      expect(status).to eq(406)
     end
     it "stops the call chain preventing anything from happening" do
       expect(app).not_to have_received(:call)
     end
     it "sends a reasonable message" do
-      expect(@response.body.first).to match(/didn't have the right mime type or version number. We only accept application\/json/)
+      _status, _headers, body = @response
+      expect(body.first).to match(/didn't have the right mime type or version number. We only accept application\/json/)
     end
   end
 
@@ -133,7 +135,6 @@ describe Stitches::ValidMimeType do
     context "unacceptable responses" do
       before do
         @response = middleware.call(env)
-        @response.finish
       end
       context "no header" do
         let(:env) {

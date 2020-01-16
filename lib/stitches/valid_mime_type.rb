@@ -16,16 +16,17 @@ module Stitches
       if accept =~ %r{application/json} && accept =~ %r{version=\d+}
         @app.call(env)
       else
-        NotAcceptableResponse.new(accept)
+        not_acceptable_response(accept)
       end
     end
 
     private
 
-    class NotAcceptableResponse < Rack::Response
-      def initialize(accept_header)
-        super("Not Acceptable - '#{accept_header}' didn't have the right mime type or version number. We only accept application/json with a version", 406)
-      end
+    def not_acceptable_response(accept_header)
+      status = 406
+      body = "Not Acceptable - '#{accept_header}' didn't have the right mime type or version number. We only accept application/json with a version"
+      header = { "WWW-Authenticate" => accept_header }
+      Rack::Response.new(body, status, header).finish
     end
 
   end
