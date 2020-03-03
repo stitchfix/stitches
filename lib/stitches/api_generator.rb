@@ -12,7 +12,6 @@ module Stitches
 
     desc "Bootstraps your API service with a basic ping controller and spec to ensure everything is setup properly"
     def bootstrap_api
-      gem "stitches"
       gem "apitome"
       gem_group :development, :test do
         gem "rspec"
