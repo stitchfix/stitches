@@ -12,7 +12,6 @@ module Stitches
 
     desc "Bootstraps your API service with a basic ping controller and spec to ensure everything is setup properly"
     def bootstrap_api
-      gem "stitches"
       gem "apitome"
       gem_group :development, :test do
         gem "rspec"
@@ -20,7 +19,9 @@ module Stitches
         gem "rspec_api_documentation"
       end
 
-      run "bundle install"
+      Bundler.with_clean_env do
+        run "bundle install"
+      end
       generate "apitome:install"
       generate "rspec:install"
 
