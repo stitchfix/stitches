@@ -5,7 +5,7 @@ version: 2
 jobs:
   release:
     docker:
-    - image: circleci/ruby:2.7.0
+    - image: circleci/ruby:2.7.1
     steps:
     - checkout
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
@@ -17,9 +17,9 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-2.7.0-rails-6.0:
+  ruby-2.7.1-rails-6.0:
     docker:
-    - image: circleci/ruby:2.7.0
+    - image: circleci/ruby:2.7.1
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-6.0
     working_directory: "~/stitches"
@@ -39,9 +39,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.6.5-rails-6.0:
+  ruby-2.6.6-rails-6.0:
     docker:
-    - image: circleci/ruby:2.6.5
+    - image: circleci/ruby:2.6.6
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-6.0
     working_directory: "~/stitches"
@@ -61,9 +61,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.7.0-rails-5.2:
+  ruby-2.7.1-rails-5.2:
     docker:
-    - image: circleci/ruby:2.7.0
+    - image: circleci/ruby:2.7.1
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-5.2
     working_directory: "~/stitches"
@@ -83,9 +83,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.6.5-rails-5.2:
+  ruby-2.6.6-rails-5.2:
     docker:
-    - image: circleci/ruby:2.6.5
+    - image: circleci/ruby:2.6.6
       environment:
         BUNDLE_GEMFILE: Gemfile.rails-5.2
     working_directory: "~/stitches"
@@ -112,31 +112,31 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-2.7.0-rails-6.0
-        - ruby-2.6.5-rails-6.0
-        - ruby-2.7.0-rails-5.2
-        - ruby-2.6.5-rails-5.2
+        - ruby-2.7.1-rails-6.0
+        - ruby-2.6.6-rails-6.0
+        - ruby-2.7.1-rails-5.2
+        - ruby-2.6.6-rails-5.2
         filters:
           tags:
-            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?RC[-\.]?\d*)?$/
+            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\d*)?$/
           branches:
             ignore: /.*/
-    - ruby-2.7.0-rails-6.0:
+    - ruby-2.7.1-rails-6.0:
         context: org-global
         filters:
           tags:
             only: &1 /.*/
-    - ruby-2.6.5-rails-6.0:
+    - ruby-2.6.6-rails-6.0:
         context: org-global
         filters:
           tags:
             only: *1
-    - ruby-2.7.0-rails-5.2:
+    - ruby-2.7.1-rails-5.2:
         context: org-global
         filters:
           tags:
             only: *1
-    - ruby-2.6.5-rails-5.2:
+    - ruby-2.6.6-rails-5.2:
         context: org-global
         filters:
           tags:
@@ -150,11 +150,11 @@ workflows:
             only:
             - master
     jobs:
-    - ruby-2.7.0-rails-6.0:
+    - ruby-2.7.1-rails-6.0:
         context: org-global
-    - ruby-2.6.5-rails-6.0:
+    - ruby-2.6.6-rails-6.0:
         context: org-global
-    - ruby-2.7.0-rails-5.2:
+    - ruby-2.7.1-rails-5.2:
         context: org-global
-    - ruby-2.6.5-rails-5.2:
+    - ruby-2.6.6-rails-5.2:
         context: org-global
