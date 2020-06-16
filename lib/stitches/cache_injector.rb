@@ -1,8 +1,8 @@
 require 'lru_redux'
 
 module Stitches::CacheInjector
-  MAX_ITEMS_IN_CACHE = 100
-  CACHE_DURATION_IN_SECONDS = 5 * 60 # five minutes
+  MAX_ITEMS_IN_CACHE = ENV.fetch("API_KEY_CACHE_MAX_ITEMS", 100)
+  CACHE_DURATION_IN_SECONDS = ENV.fetch("API_KEY_CACHE_DURATION", 5 * 60) # five minutes
 
   def self.inject
     ::ApiClient.define_singleton_method 'api_key_cache' do
