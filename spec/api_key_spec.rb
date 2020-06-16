@@ -11,6 +11,8 @@ unless defined? ApiClient
       ["enabled"]
     end
   end
+
+  Stitches::CacheInjector.inject
 end
 
 describe Stitches::ApiKey do
