@@ -27,13 +27,7 @@ module Stitches
       if authorization
         if authorization =~ /#{@configuration.custom_http_auth_scheme}\s+key=(.*)\s*$/
           key = $1
-
-          if ApiClient.column_names.include?("enabled")
-            client = ApiClient.where(key: key, enabled: true).first
-          else
-            ActiveSupport::Deprecation.warn('api_keys is missing "enabled" column.  Run "rails g stitches:add_enabled_to_api_clients"')
-            client = ApiClient.where(key: key).first
-          end
+          client = ApiClient.fetch_for_key(key)
 
           if client.present?
             env[@configuration.env_var_to_hold_api_client_primary_key] = client.id
