@@ -13,7 +13,7 @@ class Stitches::Configuration
     @custom_http_auth_scheme = UnsetString.new("custom_http_auth_scheme")
     @env_var_to_hold_api_client_primary_key = NonNullString.new("env_var_to_hold_api_client_primary_key","STITCHES_API_CLIENT_ID")
     @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client","STITCHES_API_CLIENT")
-    @max_cache_ttl = NonNullInteger.new("max_cache_ttl", 10 * 60)
+    @max_cache_ttl = NonNullInteger.new("max_cache_ttl", 5 * 60)
     @max_cache_size = NonNullInteger.new("max_cache_size", 100)
   end
 
