@@ -21,7 +21,7 @@ describe Stitches::ApiClientAccessWrapper do
     Stitches.configuration.reset_to_defaults!
   end
   describe '#fetch_by_key' do
-    context "cache is diabled" do
+    context "cache is disabled" do
       before do
         expect(ApiClient).to receive(:find_by).and_return(api_client).twice
       end
