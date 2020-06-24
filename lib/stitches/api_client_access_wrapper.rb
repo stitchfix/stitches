@@ -3,7 +3,9 @@ require 'lru_redux'
 module Stitches::ApiClientAccessWrapper
 
   def self.fetch_for_key(key)
-    api_key_cache.getset(key) do
+    if cache_enabled
+      fetch_for_key_from_cache(key)
+    else
       fetch_for_key_from_db(key)
     end
   end
@@ -32,5 +34,9 @@ module Stitches::ApiClientAccessWrapper
       Stitches.configuration.max_cache_size,
       Stitches.configuration.max_cache_ttl,
     )
+  end
+
+  def self.cache_enabled
+    Stitches.configuration.max_cache_ttl.positive?
   end
 end
