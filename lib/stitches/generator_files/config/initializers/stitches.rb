@@ -11,4 +11,14 @@ Stitches.configure do |configuration|
   # Env var that gets the primary key of the authenticated ApiKey
   # for access in your controllers, so they don't need to re-parse the header
   # configuration.env_var_to_hold_api_client_primary_key = "YOUR_ENV_VAR"
+
+  # Configures how long to cache ApiKeys in memory (In Seconds)
+  # A value of 0 will disable the cache entierly
+  # Default is 0
+  # configuration.max_cache_ttl = 5
+
+  # Configures how many ApiKeys to cache at one time
+  # This should be larger then the number of clients
+  # Default is 0
+  # configuration.max_cache_size = 100
 end
