@@ -36,12 +36,12 @@ describe Stitches::Configuration do
       expect(Stitches.configuration.env_var_to_hold_api_client_primary_key).to eq("STITCHES_API_CLIENT_ID")
     end
 
-    it "defaults to 5 minutes for max_cache_ttl" do
-      expect(Stitches.configuration.max_cache_ttl).to eq(5 * 60)
+    it "defaults to 0 for max_cache_ttl" do
+      expect(Stitches.configuration.max_cache_ttl).to eq(0)
     end
 
     it "sets a default for max_cache_size" do
-      expect(Stitches.configuration.max_cache_size).to eq(100)
+      expect(Stitches.configuration.max_cache_size).to eq(0)
     end
 
     it "blows up if you try to use custom_http_auth_scheme without having set it" do

@@ -27,7 +27,7 @@ module Stitches
       if authorization
         if authorization =~ /#{@configuration.custom_http_auth_scheme}\s+key=(.*)\s*$/
           key = $1
-          client = Stitches::ApiKeyCacheWrapper.fetch_for_key(key)
+          client = Stitches::ApiClientAccessWrapper.fetch_for_key(key)
           if client.present?
             env[@configuration.env_var_to_hold_api_client_primary_key] = client.id
             env[@configuration.env_var_to_hold_api_client] = client

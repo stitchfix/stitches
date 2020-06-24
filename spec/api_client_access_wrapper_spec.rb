@@ -13,7 +13,7 @@ unless defined? ApiClient
   end
 end
 
-describe Stitches::ApiKeyCacheWrapper do
+describe Stitches::ApiClientAccessWrapper do
   let(:api_client) {
     double(ApiClient, id: 42)
   }

@@ -26,7 +26,7 @@ describe Stitches::ApiKey do
     allow(Rails).to receive(:application).and_return(fake_rails_app)
     allow(app).to receive(:call).with(env)
     allow(ApiClient).to receive(:find_by).and_return(api_client)
-    Stitches::ApiKeyCacheWrapper.clear_api_cache
+    Stitches::ApiClientAccessWrapper.clear_api_cache
   end
 
   subject(:middleware) { described_class.new(app, namespace: "/api") }
