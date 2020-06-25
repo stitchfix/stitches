@@ -26,7 +26,7 @@ module Stitches::ApiClientAccessWrapper
   end
 
   def self.clear_api_cache
-    api_key_cache.clear
+    api_key_cache.clear if cache_enabled
   end
 
   def self.api_key_cache
