@@ -117,6 +117,24 @@ See [the wiki](https://github.com/stitchfix/stitches/wiki/Setup) for how to setu
   - Acceptance tests that can produce API documentation as they test your app.
 - Stitches provides [testing support](https://github.com/stitchfix/stitches/wiki/Testing)
 
+## API Key Caching
+
+Since version 4.0.0, stitches now has the ability to cache API keys in
+memory for a configurable amount of time. This may be an improvement for
+some applications.
+
+You must configure the API Cache for it be used.
+
+```ruby
+Stitches.configure do |config|
+  config.max_cache_ttl = 5  # seconds
+  config.max_cache_size = 100  # how many keys to cache
+end
+```
+
+Your cache size should be
+larger then the number of consumer keys your service has.
+
 ## Developing
 
 Although `Stitches.configuration` is global, do not depend directly on that in your logic. Instead, allow all classes to receive a configuration object in their constructor. This makes the classes easier to deal with and change, without incurring much of a real cost to development. Global symbols suck, but are convenient. This is how you make the most of it.
