@@ -146,20 +146,4 @@ describe Stitches::Configuration do
       }.to raise_error(/max_cache_size must be an Integer, not a NilClass/)
     end
   end
-
-  context "deprecated options we want to support for backwards compatibility" do
-
-    let(:logger) { double("logger") }
-    before do
-      allow(Rails).to receive(:logger).and_return(logger)
-      allow(logger).to receive(:info)
-    end
-
-    it "'whitelist' still works for allowlist" do
-      Stitches.configure do |config|
-        config.whitelist_regexp = /foo/
-      end
-      expect(Stitches.configuration.allowlist_regexp).to eq(/foo/)
-    end
-  end
 end
