@@ -15,10 +15,8 @@ end
 
 describe Stitches::ApiKey do
   let(:app) { double("rack app") }
-  let(:api_clients) {
-    [
-      double(ApiClient, id: 42)
-    ]
+  let(:api_client) {
+    double(ApiClient, id: 42)
   }
 
   before do
@@ -27,7 +25,8 @@ describe Stitches::ApiKey do
     fake_rails_app = MyApp::Application.new
     allow(Rails).to receive(:application).and_return(fake_rails_app)
     allow(app).to receive(:call).with(env)
-    allow(ApiClient).to receive(:where).and_return(api_clients)
+    allow(ApiClient).to receive(:find_by).and_return(api_client)
+    Stitches::ApiClientAccessWrapper.clear_api_cache
   end
 
   subject(:middleware) { described_class.new(app, namespace: "/api") }
@@ -158,11 +157,11 @@ describe Stitches::ApiKey do
       end
 
       it "sets the api_client's ID in the environment" do
-        expect(env[Stitches.configuration.env_var_to_hold_api_client_primary_key]).to eq(api_clients.first.id)
+        expect(env[Stitches.configuration.env_var_to_hold_api_client_primary_key]).to eq(api_client.id)
       end
 
       it "sets the api_client itself in the environment" do
-        expect(env[Stitches.configuration.env_var_to_hold_api_client]).to eq(api_clients.first)
+        expect(env[Stitches.configuration.env_var_to_hold_api_client]).to eq(api_client)
       end
     end
 
@@ -177,7 +176,7 @@ describe Stitches::ApiKey do
             "HTTP_AUTHORIZATION" => "MyAwesomeInternalScheme key=foobar",
           }
         }
-        let(:api_clients) { [] }
+        let(:api_client) { nil }
 
         it_behaves_like "an unauthorized response" do
           let(:expected_body) { "Unauthorized - key invalid" }

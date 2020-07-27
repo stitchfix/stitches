@@ -9,17 +9,23 @@ describe Stitches::Configuration do
     let(:allowlist_regexp) { %r{foo} }
     let(:custom_http_auth_scheme) { "Blah" }
     let(:env_var_to_hold_api_client_primary_key) { "FOOBAR" }
+    let(:max_cache_ttl) { 11 }
+    let(:max_cache_size) { 111 }
 
     it "can be configured globally" do
       Stitches.configure do |config|
         config.allowlist_regexp                       = allowlist_regexp
         config.custom_http_auth_scheme                = custom_http_auth_scheme
         config.env_var_to_hold_api_client_primary_key = env_var_to_hold_api_client_primary_key
+        config.max_cache_ttl                          = max_cache_ttl
+        config.max_cache_size                         = max_cache_size
       end
 
       expect(Stitches.configuration.allowlist_regexp).to                       eq(allowlist_regexp)
       expect(Stitches.configuration.custom_http_auth_scheme).to                eq(custom_http_auth_scheme)
       expect(Stitches.configuration.env_var_to_hold_api_client_primary_key).to eq(env_var_to_hold_api_client_primary_key)
+      expect(Stitches.configuration.max_cache_ttl).to                          eq(max_cache_ttl)
+      expect(Stitches.configuration.max_cache_size).to                         eq(max_cache_size)
     end
 
     it "defaults to nil for allowlist_regexp" do
@@ -28,6 +34,14 @@ describe Stitches::Configuration do
 
     it "sets a default for env_var_to_hold_api_client_primary_key" do
       expect(Stitches.configuration.env_var_to_hold_api_client_primary_key).to eq("STITCHES_API_CLIENT_ID")
+    end
+
+    it "defaults to 0 for max_cache_ttl" do
+      expect(Stitches.configuration.max_cache_ttl).to eq(0)
+    end
+
+    it "sets a default for max_cache_size" do
+      expect(Stitches.configuration.max_cache_size).to eq(0)
     end
 
     it "blows up if you try to use custom_http_auth_scheme without having set it" do
@@ -102,19 +116,34 @@ describe Stitches::Configuration do
       }.not_to raise_error
     end
   end
-  context "deprecated options we want to support for backwards compatibility" do
 
-    let(:logger) { double("logger") }
-    before do
-      allow(Rails).to receive(:logger).and_return(logger)
-      allow(logger).to receive(:info)
+  describe "max_cache_ttl" do
+    let(:config) { Stitches::Configuration.new }
+    it "must be an integer" do
+      expect {
+        config.max_cache_ttl = ""
+      }.to raise_error(/max_cache_ttl must be an Integer, not a String/)
     end
 
-    it "'whitelist' still works for allowlist" do
-      Stitches.configure do |config|
-        config.whitelist_regexp = /foo/
-      end
-      expect(Stitches.configuration.allowlist_regexp).to eq(/foo/)
+    it "may not be nil" do
+      expect {
+        config.max_cache_ttl = nil
+      }.to raise_error(/max_cache_ttl must be an Integer, not a NilClass/)
+    end
+  end
+
+  describe "max_cache_size" do
+    let(:config) { Stitches::Configuration.new }
+    it "must be an integer" do
+      expect {
+        config.max_cache_size = ""
+      }.to raise_error(/max_cache_size must be an Integer, not a String/)
+    end
+
+    it "may not be nil" do
+      expect {
+        config.max_cache_size = nil
+      }.to raise_error(/max_cache_size must be an Integer, not a NilClass/)
     end
   end
 end

@@ -2,7 +2,6 @@ module Stitches
   # A middleware that will skip its behavior if the path matches an allowed URL
   class AllowlistMiddleware
     def initialize(app, options={})
-
       @app           = app
       @configuration = options[:configuration] ||  Stitches.configuration
       @except        = options[:except]        || @configuration.allowlist_regexp

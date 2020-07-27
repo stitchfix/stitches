@@ -13,6 +13,8 @@ class Stitches::Configuration
     @custom_http_auth_scheme = UnsetString.new("custom_http_auth_scheme")
     @env_var_to_hold_api_client_primary_key = NonNullString.new("env_var_to_hold_api_client_primary_key","STITCHES_API_CLIENT_ID")
     @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client","STITCHES_API_CLIENT")
+    @max_cache_ttl = NonNullInteger.new("max_cache_ttl", 0)
+    @max_cache_size = NonNullInteger.new("max_cache_size", 0)
   end
 
   # A RegExp that allows URLS around the mime type and api key requirements.
@@ -25,11 +27,6 @@ class Stitches::Configuration
     @allowlist_regexp = new_allowlist_regexp
   end
 
-  def whitelist_regexp=(new_allowlist_regexp)
-    self.allowlist_regexp = new_allowlist_regexp
-    warn("⚠️ 'whitelist' is deprecated in stitches configuration, please use 'allowlist' or auto-update with:\n\n  bin/rails g stitches:update_configuration\n\n⚠️  'whitelist' will be removed in 4.0")
-  end
-
   # The name of your custom http auth scheme.  This must be set, and has no default
   def custom_http_auth_scheme
     @custom_http_auth_scheme.to_s
@@ -39,7 +36,7 @@ class Stitches::Configuration
     @custom_http_auth_scheme = NonNullString.new("custom_http_auth_scheme",new_custom_http_auth_scheme)
   end
 
-  # The name of the environment variable that the ApiKey middleware should use to 
+  # The name of the environment variable that the ApiKey middleware should use to
   # place the primary key of the authenticated ApiKey.  For example, if a user provides
   # the api key 1234-1234-1234-1234, and that maps to the primary key 42 in your database,
   # the environment will contain "42" in the key provided here.
@@ -59,7 +56,39 @@ class Stitches::Configuration
     @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client",new_env_var_to_hold_api_client)
   end
 
+  def max_cache_ttl
+    @max_cache_ttl.to_i
+  end
+
+  def max_cache_ttl=(new_max_cache_ttl)
+    @max_cache_ttl = NonNullInteger.new("max_cache_ttl", new_max_cache_ttl)
+  end
+
+  def max_cache_size
+    @max_cache_size.to_i
+  end
+
+  def max_cache_size=(new_max_cache_size)
+    @max_cache_size = NonNullInteger.new("max_cache_size", new_max_cache_size)
+  end
+
 private
+
+  class NonNullInteger
+    def initialize(name, value)
+      unless value.is_a?(Integer)
+        raise "#{name} must be an Integer, not a #{value.class}"
+      end
+
+      @value = value
+    end
+
+    def to_i
+      @value
+    end
+
+    alias to_integer to_i
+  end
 
   class NonNullString
     def initialize(name,string)
