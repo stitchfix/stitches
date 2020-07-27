@@ -109,35 +109,6 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     expect(include_line).to_not be_nil,lines.inspect
   end
 
-  it "inserts can update old configuration" do
-    run "bin/rails generate stitches:api"
-
-    initializer = rails_root / "config" / "initializers" / "stitches.rb"
-
-    initializer_contents = File.read(initializer).split(/\n/)
-    found_initializer = false
-    File.open(initializer,"w") do |file|
-      initializer_contents.each do |line|
-        if line =~ /allowlist/
-          line = line.gsub("allowlist","whitelist")
-          found_initializer = true
-        end
-        file.puts line
-      end
-    end
-
-    raise "Didn't find 'allowlist' in the initializer?!" if !found_initializer
-
-    run "bin/rails generate stitches:update_configuration"
-
-    lines =  File.read(initializer).split(/\n/)
-    include_line = lines.detect { |line|
-      line =~ /whitelist/
-    }
-
-    expect(include_line).to be_nil,lines.inspect
-  end
-
   class RoutesFileAnalysis
     attr_reader :routes_file
     def initialize(routes_file, namespace: nil, module_scope: nil, resource: nil, mounted_engine: nil)
