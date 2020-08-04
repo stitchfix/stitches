@@ -25,6 +25,11 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/master/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
@@ -47,6 +52,11 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/master/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
@@ -69,6 +79,11 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/master/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
@@ -91,6 +106,11 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/master/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
@@ -118,7 +138,7 @@ workflows:
         - ruby-2.6.6-rails-5.2
         filters:
           tags:
-            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\d*)?$/
+            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\w*)?$/
           branches:
             ignore: /.*/
     - ruby-2.7.1-rails-6.0:
