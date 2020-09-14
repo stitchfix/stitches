@@ -3,6 +3,24 @@
 ---
 version: 2
 jobs:
+  generate-and-push-docs:
+    docker:
+    - image: circleci/ruby:2.7.1
+    steps:
+    - checkout
+    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
+    - run: bundle install --full-index
+    - run:
+        name: Generate documentation
+        command: ' if [[ $(bundle exec rake -T docs:generate:custom) ]]; then echo
+          "Generating docs using rake task docs:generate:custom" ; bundle exec rake
+          docs:generate:custom ; elif [[ $(bundle exec rake -T docs:generate) ]];
+          then echo "Generating docs using rake task docs:generate" ; bundle exec
+          rake docs:generate ; else echo "Skipping doc generation" ; exit 0 ; fi '
+    - run:
+        name: Push documentation to Unwritten
+        command: if [[ $(bundle exec rake -T docs:push) ]]; then bundle exec rake
+          docs:push; fi
   release:
     docker:
     - image: circleci/ruby:2.7.1
@@ -136,6 +154,15 @@ workflows:
         - ruby-2.6.6-rails-6.0
         - ruby-2.7.1-rails-5.2
         - ruby-2.6.6-rails-5.2
+        filters:
+          tags:
+            only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\w*)?$/
+          branches:
+            ignore: /.*/
+    - generate-and-push-docs:
+        context: org-global
+        requires:
+        - release
         filters:
           tags:
             only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\w*)?$/
