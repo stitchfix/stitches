@@ -132,6 +132,22 @@ describe Stitches::ValidMimeType do
       end
     end
 
+    context "protbuf mime type" do
+      let(:env) {
+        {
+          "PATH_INFO" => "/api/ping",
+          "HTTP_ACCEPT" => "application/protobuf",
+        }
+      }
+
+      before do
+        @response = middleware.call(env)
+      end
+      it "calls through to the rest of the chain" do
+        expect(app).to have_received(:call).with(env)
+      end
+    end
+
     context "unacceptable responses" do
       before do
         @response = middleware.call(env)
