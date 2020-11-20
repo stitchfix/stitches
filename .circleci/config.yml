@@ -67,7 +67,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "#devex-alerts"
+        command: bundle exec y-notify "#eng-runtime-alerts"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -97,7 +97,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "#devex-alerts"
+        command: bundle exec y-notify "#eng-runtime-alerts"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -127,7 +127,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "#devex-alerts"
+        command: bundle exec y-notify "#eng-runtime-alerts"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -157,7 +157,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "#devex-alerts"
+        command: bundle exec y-notify "#eng-runtime-alerts"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
