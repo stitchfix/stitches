@@ -41,6 +41,66 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
+  ruby-2.7.2-rails-6.1:
+    docker:
+    - image: circleci/ruby:2.7.2
+      auth:
+        username: "$DOCKERHUB_USERNAME"
+        password: "$DOCKERHUB_PASSWORD"
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-6.1
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/master/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
+    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
+    - run: bundle install --full-index
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Run Additional CI Steps
+        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
+          fi
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify "#eng-runtime-alerts"
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
+  ruby-2.6.6-rails-6.1:
+    docker:
+    - image: circleci/ruby:2.6.6
+      auth:
+        username: "$DOCKERHUB_USERNAME"
+        password: "$DOCKERHUB_PASSWORD"
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-6.1
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/master/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
+    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
+    - run: bundle install --full-index
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Run Additional CI Steps
+        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
+          fi
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify "#eng-runtime-alerts"
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
   ruby-2.7.2-rails-6.0:
     docker:
     - image: circleci/ruby:2.7.2
@@ -168,6 +228,8 @@ workflows:
     - release:
         context: org-global
         requires:
+        - ruby-2.7.2-rails-6.1
+        - ruby-2.6.6-rails-6.1
         - ruby-2.7.2-rails-6.0
         - ruby-2.6.6-rails-6.0
         - ruby-2.7.2-rails-5.2
@@ -186,11 +248,21 @@ workflows:
             only: /^[0-9]+\.[0-9]+\.[0-9]+(\.?(RC|rc)[-\.]?\w*)?$/
           branches:
             ignore: /.*/
-    - ruby-2.7.2-rails-6.0:
+    - ruby-2.7.2-rails-6.1:
         context: org-global
         filters:
           tags:
             only: &1 /.*/
+    - ruby-2.6.6-rails-6.1:
+        context: org-global
+        filters:
+          tags:
+            only: *1
+    - ruby-2.7.2-rails-6.0:
+        context: org-global
+        filters:
+          tags:
+            only: *1
     - ruby-2.6.6-rails-6.0:
         context: org-global
         filters:
@@ -215,6 +287,10 @@ workflows:
             only:
             - master
     jobs:
+    - ruby-2.7.2-rails-6.1:
+        context: org-global
+    - ruby-2.6.6-rails-6.1:
+        context: org-global
     - ruby-2.7.2-rails-6.0:
         context: org-global
     - ruby-2.6.6-rails-6.0:
