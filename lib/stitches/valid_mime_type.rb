@@ -20,7 +20,7 @@ module Stitches
 
     def do_call(env)
       accept = String(env["HTTP_ACCEPT"])
-      if (accept =~ %r{application/json} && accept =~ %r{version=\d+}) || accept =~ %r{application/protobuf}
+      if (%r{application/json}.match?(accept) && %r{version=\d+}.match?(accept)) || %r{application/protobuf}.match?(accept)
         @app.call(env)
       else
         not_acceptable_response(accept)
