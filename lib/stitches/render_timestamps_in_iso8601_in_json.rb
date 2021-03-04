@@ -1,9 +1,13 @@
 require 'active_support/time_with_zone'
 
 class ActiveSupport::TimeWithZone
-  # We want dates to be a) in UTC and b) in ISO8601 always
+  # We want dates to always be in UTC
   def as_json(options = {})
-    utc.iso8601(ActiveSupport.time_precision)
+    if utc?
+      super
+    else
+      utc.as_json(options)
+    end
   end
 end
 
