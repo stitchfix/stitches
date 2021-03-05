@@ -143,6 +143,10 @@ Also, the integration test does a lot of "testing the implementation", but since
 failing with a successful result, we have to make sure that the various `inject_into_file` calls are actually working. Do not do
 any fancy refactors here, just keep it up to date.
 
+## Releases
+
+See the release process for open source gems in the Stitch Fix engineering wiki under technical topics.
+
 ---
 
 Provided with love by your friends at [Stitch Fix Engineering](http://technology.stitchfix.com)
