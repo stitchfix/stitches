@@ -63,7 +63,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     run "bin/rails generate stitches:api"
 
     # Yuck!  So much duplication!  BUT: Rails app templates have a notoriously silent failure mode, so mostly
-    # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens 
+    # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens
     # during generation are there.  It's gross, and I'm sorry.
     #
     # It's also in one big block because making a new rails app and running the generator multiple times seems bad.
@@ -85,6 +85,14 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
       expect(File.read(rails_root / "config" / "initializers" / "apitome.rb")).to include("config.title = 'Service Documentation'")
       expect(File.read(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to include("rescue_from StandardError")
       expect(File.read(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to include("rescue_from ActiveRecord::RecordNotFound")
+
+      run "bin/rails generate stitches:add_enabled_to_api_clients"
+      migrations = Dir["#{rails_root}/db/migrate/*.rb"].sort
+      expect(migrations.size).to eq(3)
+
+      run "bin/rails generate stitches:add_disabled_at_to_api_clients"
+      migrations = Dir["#{rails_root}/db/migrate/*.rb"].sort
+      expect(migrations.size).to eq(4)
     end
   end
 
