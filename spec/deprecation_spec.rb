@@ -1,4 +1,4 @@
-require 'spec_helper.rb'
+require 'rails_helper'
 
 describe Stitches::Deprecation do
   let(:response) {

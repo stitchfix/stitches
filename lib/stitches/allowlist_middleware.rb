@@ -3,15 +3,14 @@ module Stitches
   class AllowlistMiddleware
     def initialize(app, options={})
       @app           = app
-      @configuration = options[:configuration] ||  Stitches.configuration
-      @except        = options[:except]        || @configuration.allowlist_regexp
+      @configuration = options[:configuration]
+      @except        = options[:except]
 
-      unless @except.nil? || @except.is_a?(Regexp)
-        raise ":except must be a Regexp"
-      end
+      allowlist_regex
     end
+
     def call(env)
-      if @except && @except.match(env["PATH_INFO"])
+      if allowlist_regex && allowlist_regex.match(env["PATH_INFO"])
         @app.call(env)
       else
         do_call(env)
@@ -24,5 +23,20 @@ module Stitches
       raise 'subclass must implement'
     end
 
+    def configuration
+      @configuration || Stitches.configuration
+    end
+
+  private
+
+    def allowlist_regex
+      regex = @except || configuration.allowlist_regexp
+
+      unless regex.nil? || regex.is_a?(Regexp)
+        raise ":except must be a Regexp"
+      end
+
+      regex
+    end
   end
 end
