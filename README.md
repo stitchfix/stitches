@@ -35,7 +35,7 @@ Then, set it up:
 
 ### Upgrading from an older version
 
-- When upgrading to version 4.1.0 you may now take advantage of an in-memory cache
+- When upgrading to version 4.0.0 and above you may now take advantage of an in-memory cache
 
 You can enabled it like so
 
@@ -66,8 +66,8 @@ Anytime a disabled key is used a log will be generated. If it is before the
 an error message. `disabled_key_leniency_error_log_threshold_in_seconds` should never be a greater number than 
 `disabled_key_leniency_in_seconds`, as this provides an escallating series of warnings before finally disabling access.
 
-- If you have a version lower than 3.3.0, you need to run three generators, two of which create database migrations on
-  your `api_clients` table:
+- If you are upgrading from a version older than 3.3.0 you need to run three generators, two of which create database
+  migrations on your `api_clients` table:
 
   ```
   > bin/rails generate stitches:add_enabled_to_api_clients
@@ -75,14 +75,14 @@ an error message. `disabled_key_leniency_error_log_threshold_in_seconds` should 
   > bin/rails generate stitches:add_disabled_at_to_api_clients
   ```
 
-- If you have a version lower than 3.6.0, you need to run two generators:
+- If you are upgrading from a version between 3.3.0 and 3.5.0 you need to run two generators:
 
   ```
   > bin/rails generate stitches:add_deprecation
   > bin/rails generate stitches:add_disabled_at_to_api_clients
   ```
 
-- If you have a version lower than 4.1.0, you need to run one generator:
+- If you are upgrading from a version between 3.6.0 and 4.0.2 you need to run one generator:
 
   ```
   > bin/rails generate stitches:add_disabled_at_to_api_clients

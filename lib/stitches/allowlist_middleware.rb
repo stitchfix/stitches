@@ -32,7 +32,7 @@ module Stitches
     def allowlist_regex
       regex = @except || configuration.allowlist_regexp
 
-      unless regex.nil? || regex.is_a?(Regexp)
+      if !regex.nil? && !regex.is_a?(Regexp)
         raise ":except must be a Regexp"
       end
 
