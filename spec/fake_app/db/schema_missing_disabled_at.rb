@@ -6,7 +6,6 @@ ActiveRecord::Schema.define do
     t.column :key, "uuid", null: false
     t.column :enabled, :bool, null: false, default: true
     t.column :created_at, "timestamp with time zone", null: false
-    t.column :disabled_at, "timestamp with time zone", null: true
   end
   add_index :api_clients, [:name]
   add_index :api_clients, [:key], unique: true
