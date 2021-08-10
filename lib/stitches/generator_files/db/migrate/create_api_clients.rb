@@ -1,8 +1,4 @@
-<% if Rails::VERSION::MAJOR >= 5 %>
-class CreateApiClients < ActiveRecord::Migration[<%= Rails::VERSION::MAJOR %>.<%= Rails::VERSION::MINOR %>]
-<% else %>
-class CreateApiClients < ActiveRecord::Migration
-<% end %>
+class CreateApiClients < ActiveRecord::Migration<% if Rails::VERSION::MAJOR >= 5 %>[<%= Rails::VERSION::MAJOR %>.<%= Rails::VERSION::MINOR %>]<% end %>
   def change
     create_table :api_clients do |t|
       t.string :name, null: false
