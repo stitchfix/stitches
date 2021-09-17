@@ -102,10 +102,11 @@ RSpec.describe "/api/hellos", type: :request do
         context "when disabled_at is set to a time older than three days ago" do
           let(:disabled_at) { 4.day.ago }
 
-          it "allows the call" do
+          it "does not allow the call" do
             execute_call
 
             expect_unauthorized
+
           end
         end
 
@@ -162,7 +163,9 @@ RSpec.describe "/api/hellos", type: :request do
 
           it "logs error about the disabled key to the Rails.logger" do
             allow(Rails.logger).to receive(:warn)
-            allow(Rails.logger).to receive(:error)
+            allow(Rails.logger).to receive(:error) do |message1|
+              expect(message1).not_to include uuid
+            end
 
             execute_call
 
@@ -210,7 +213,10 @@ RSpec.describe "/api/hellos", type: :request do
             let(:disabled_at) { 101.seconds.ago }
 
             it "forbids the call" do
-              allow(Rails.logger).to receive(:error)
+              allow(Rails.logger).to receive(:error) do |message1|
+                expect(message1).not_to include uuid
+              end
+
               execute_call
 
               expect_unauthorized
@@ -235,7 +241,9 @@ RSpec.describe "/api/hellos", type: :request do
             let(:disabled_at) { 25.seconds.ago }
 
             it "allows the call" do
-              allow(Rails.logger).to receive(:warn)
+              allow(Rails.logger).to receive(:warn) do |message1|
+                expect(message1).not_to include uuid
+              end
 
               execute_call
 
