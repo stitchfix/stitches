@@ -33,7 +33,7 @@ module Stitches::ApiClientAccessWrapper
 
     disabled_at = api_client.respond_to?(:disabled_at) ? api_client.disabled_at : nil
     if disabled_at && disabled_at > configuration.disabled_key_leniency_in_seconds.seconds.ago
-      message = "Allowing disabled ApiClient: #{api_client.name} with key #{api_client.key} disabled at #{disabled_at}"
+      message = "Allowing disabled ApiClient: #{api_client.name} with key #{redact_key(api_client)} disabled at #{disabled_at}"
       if disabled_at > configuration.disabled_key_leniency_error_log_threshold_in_seconds.seconds.ago
         logger.warn(message)
       else
@@ -41,9 +41,13 @@ module Stitches::ApiClientAccessWrapper
       end
       return api_client
     else
-      logger.error("Rejecting disabled ApiClient: #{api_client.name} with key #{api_client.key}")
+      logger.error("Rejecting disabled ApiClient: #{api_client.name} with key #{redact_key(api_client)}")
     end
     nil
+  end
+
+  def self.redact_key(api_client)
+    "*****#{api_client.key.to_s[-8..-1]}"
   end
 
   def self.logger
