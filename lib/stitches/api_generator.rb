@@ -12,7 +12,6 @@ module Stitches
 
     desc "Bootstraps your API service with a basic ping controller and spec to ensure everything is setup properly"
     def bootstrap_api
-      gem "apitome"
       gem_group :development, :test do
         gem "rspec"
         gem "rspec-rails"
@@ -22,11 +21,7 @@ module Stitches
       Bundler.with_clean_env do
         run "bundle install"
       end
-      generate "apitome:install"
       generate "rspec:install"
-
-      gsub_file 'config/initializers/apitome.rb', /config.mount_at = .*$/, "config.mount_at = nil"
-      gsub_file 'config/initializers/apitome.rb', /config.title = .*$/, "config.title = 'Service Documentation'"
 
       inject_into_file "config/routes.rb", before: /^end/ do<<-ROUTES
 namespace :api do
@@ -40,11 +35,6 @@ namespace :api do
     # as well as for your client to be able to validate this as well.
   end
 end
-
-api_docs = Rack::Auth::Basic.new(Apitome::Engine) do |_, password|
-  password == ENV['HTTP_AUTH_PASSWORD']
-end
-mount api_docs, at: "docs"
       ROUTES
       end
 
@@ -77,7 +67,7 @@ require 'stitches/spec'
 require 'rspec_api_documentation'
 
 RspecApiDocumentation.configure do |config|
-  config.format = :json
+  config.format = [:json, :html]
   config.request_headers_to_include = %w(
     Accept
     Content-Type
