@@ -1,4 +1,4 @@
-require 'spec_helper.rb'
+require 'rails_helper'
 
 class MyFakeError < StandardError
 end
@@ -10,9 +10,9 @@ class FakePersonHolder
   validates_presence_of :name
 
   def valid?
-    # doing this because we can't use validates_associated on a non-AR object, and 
+    # doing this because we can't use validates_associated on a non-AR object, and
     # our logic doesn't depend on validates_associated, per se
-    super.tap { 
+    super.tap {
       unless person.valid?
         errors.add(:person,"is not valid")
       end

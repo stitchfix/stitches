@@ -25,12 +25,12 @@ module Stitches
     def do_call(env)
       authorization = env["HTTP_AUTHORIZATION"]
       if authorization
-        if authorization =~ /#{@configuration.custom_http_auth_scheme}\s+key=(.*)\s*$/
+        if authorization =~ /#{configuration.custom_http_auth_scheme}\s+key=(.*)\s*$/
           key = $1
-          client = Stitches::ApiClientAccessWrapper.fetch_for_key(key)
+          client = Stitches::ApiClientAccessWrapper.fetch_for_key(key, configuration)
           if client.present?
-            env[@configuration.env_var_to_hold_api_client_primary_key] = client.id
-            env[@configuration.env_var_to_hold_api_client] = client
+            env[configuration.env_var_to_hold_api_client_primary_key] = client.id
+            env[configuration.env_var_to_hold_api_client] = client
             @app.call(env)
           else
             unauthorized_response("key invalid")
@@ -59,7 +59,7 @@ module Stitches
     def unauthorized_response(reason)
       status = 401
       body = "Unauthorized - #{reason}"
-      header = { "WWW-Authenticate" => "#{@configuration.custom_http_auth_scheme} realm=#{rails_app_module}" }
+      header = { "WWW-Authenticate" => "#{configuration.custom_http_auth_scheme} realm=#{rails_app_module}" }
       Rack::Response.new(body, status, header).finish
     end
 

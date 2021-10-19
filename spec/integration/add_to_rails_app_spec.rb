@@ -51,7 +51,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
           run use_local_stitches
           # It's unclear why, but on CI the gems are not found when installed
           # through bundler however installing them explicitly first fixes it.
-          run "gem install apitome rspec-rails rspec_api_documentation"
+          run "gem install rspec-rails rspec_api_documentation"
           run "bundle install"
           example.run
         end
@@ -63,17 +63,15 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     run "bin/rails generate stitches:api"
 
     # Yuck!  So much duplication!  BUT: Rails app templates have a notoriously silent failure mode, so mostly
-    # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens 
+    # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens
     # during generation are there.  It's gross, and I'm sorry.
     #
     # It's also in one big block because making a new rails app and running the generator multiple times seems bad.
     aggregate_failures do
       expect(File.exist?(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to eq(true)
-      expect(rails_root / "Gemfile").to contain_gem("apitome")
       expect(rails_root / "Gemfile").to contain_gem("rspec_api_documentation")
       expect(rails_root / "config" / "routes.rb").to have_route(namespace: :api, module_scope: :v1, resource: 'ping')
       expect(rails_root / "config" / "routes.rb").to have_route(namespace: :api, module_scope: :v2, resource: 'ping')
-      expect(rails_root / "config" / "routes.rb").to have_mounted_engine("Apitome::Engine")
       migrations = Dir["#{rails_root}/db/migrate/*.rb"].sort
       expect(migrations.size).to eq(2)
       expect(migrations[0]).to match(/\/\d+_enable_uuid_ossp_extension.rb/)
@@ -81,10 +79,16 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
       expect(File.read(rails_root / "spec" / "rails_helper.rb")).to include("config.include RSpec::Rails::RequestExampleGroup, type: :feature")
       expect(File.read(rails_root / "spec" / "rails_helper.rb")).to include("require 'stitches/spec'")
       expect(File.read(rails_root / "spec" / "rails_helper.rb")).to include("require 'rspec_api_documentation'")
-      expect(File.read(rails_root / "config" / "initializers" / "apitome.rb")).to include("config.mount_at = nil")
-      expect(File.read(rails_root / "config" / "initializers" / "apitome.rb")).to include("config.title = 'Service Documentation'")
       expect(File.read(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to include("rescue_from StandardError")
       expect(File.read(rails_root / "app" / "controllers" / "api" / "api_controller.rb")).to include("rescue_from ActiveRecord::RecordNotFound")
+
+      run "bin/rails generate stitches:add_enabled_to_api_clients"
+      migrations = Dir["#{rails_root}/db/migrate/*.rb"].sort
+      expect(migrations.size).to eq(3)
+
+      run "bin/rails generate stitches:add_disabled_at_to_api_clients"
+      migrations = Dir["#{rails_root}/db/migrate/*.rb"].sort
+      expect(migrations.size).to eq(4)
     end
   end
 

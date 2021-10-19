@@ -1,5 +1,6 @@
 pkg
 spec/reports
+spec/fake_app/log/
 .vimrc
 *.sw?
 .idea/

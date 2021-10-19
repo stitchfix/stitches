@@ -1,8 +1,8 @@
-require 'spec_helper.rb'
+require 'rails_helper'
 
 describe Stitches::ValidMimeType do
   let(:app) { double("rack app") }
-  
+
   before do
     allow(app).to receive(:call).with(env)
   end
@@ -132,6 +132,8 @@ describe Stitches::ValidMimeType do
       end
     end
 
+    # The only remaining thing being tested outside the integration test is the little hole opened up to allow
+    # protobuf services to function
     context "protbuf mime type" do
       let(:env) {
         {
@@ -160,7 +162,7 @@ describe Stitches::ValidMimeType do
         }
         it_behaves_like "an unacceptable response"
       end
-      context "bad mime type" do
+      context "bad version" do
         let(:env) {
           {
             "PATH_INFO" => "/api/ping",
@@ -169,7 +171,7 @@ describe Stitches::ValidMimeType do
         }
         it_behaves_like "an unacceptable response"
       end
-      context "bad version" do
+      context "bad mime type" do
         let(:env) {
           {
             "PATH_INFO" => "/api/ping",

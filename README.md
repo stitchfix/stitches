@@ -35,7 +35,7 @@ Then, set it up:
 
 ### Upgrading from an older version
 
-- When upgrading to version 4.0.0 you may now take advantage of an in-memory cache
+- When upgrading to version 4.0.0 and above you may now take advantage of an in-memory cache
 
 You can enabled it like so
 
@@ -46,18 +46,46 @@ Stitches.configure do |config|
 end
 ```
 
-- If you have a version lower than 3.3.0, you need to run two generators, one of which creates a new database migration on your
-  `api_clients` table:
+You can also set a leniency for disabled API keys, which will allow old API keys to continue to be used if they have a
+`disabled_at` field set as long as the leniency is not exceeded. Note that if the `disabled_at` field is not populated
+the behavior will remain the same as it always was, and the request will be denied when the `enabled` field is set to
+`true`. If Stitches allows a call due to leniency settings, a log message will be generated with a severity depending on
+how long ago the API key was disabled.
+
+```ruby
+Stitches.configure do |config|
+  config.disabled_key_leniency_in_seconds = 3 * 24 * 60 * 60 # Time in seconds, defaults to three days 
+  config.disabled_key_leniency_error_log_threshold_in_seconds = 2 * 24 * 60 * 60 # Time in seconds, defaults to two days 
+end
+```
+
+If a disabled key is used within the `disabled_key_leniency_in_seconds`, it will be allowed. 
+
+Anytime a disabled key is used a log will be generated. If it is before the 
+`disabled_key_leniency_error_log_threshold_in_seconds` it will be a warning log message, if it is after that, it will be
+an error message. `disabled_key_leniency_error_log_threshold_in_seconds` should never be a greater number than 
+`disabled_key_leniency_in_seconds`, as this provides an escallating series of warnings before finally disabling access.
+
+- If you are upgrading from a version older than 3.3.0 you need to run three generators, two of which create database
+  migrations on your `api_clients` table:
 
   ```
   > bin/rails generate stitches:add_enabled_to_api_clients
   > bin/rails generate stitches:add_deprecation
+  > bin/rails generate stitches:add_disabled_at_to_api_clients
   ```
 
-- If you have a version lower than 3.6.0, you need to run one generator:
+- If you are upgrading from a version between 3.3.0 and 3.5.0 you need to run two generators:
 
   ```
   > bin/rails generate stitches:add_deprecation
+  > bin/rails generate stitches:add_disabled_at_to_api_clients
+  ```
+
+- If you are upgrading from a version between 3.6.0 and 4.0.2 you need to run one generator:
+
+  ```
+  > bin/rails generate stitches:add_disabled_at_to_api_clients
   ```
 
 ## Example Microservice Endpoint
