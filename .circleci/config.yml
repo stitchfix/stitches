@@ -11,6 +11,7 @@ jobs:
         password: "$DOCKERHUB_PASSWORD"
     steps:
     - checkout
+    - run: sudo apt-get update && sudo apt-get install libsqlite3-dev
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run:
@@ -32,6 +33,7 @@ jobs:
         password: "$DOCKERHUB_PASSWORD"
     steps:
     - checkout
+    - run: sudo apt-get update && sudo apt-get install libsqlite3-dev
     - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
     - run: bundle install --full-index
     - run:
@@ -52,6 +54,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run: sudo apt-get update && sudo apt-get install libsqlite3-dev
     - run:
         name: Check for Gemfile.lock presence
         command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
@@ -82,6 +85,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run: sudo apt-get update && sudo apt-get install libsqlite3-dev
     - run:
         name: Check for Gemfile.lock presence
         command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
@@ -112,6 +116,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run: sudo apt-get update && sudo apt-get install libsqlite3-dev
     - run:
         name: Check for Gemfile.lock presence
         command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
@@ -142,6 +147,7 @@ jobs:
     working_directory: "~/stitches"
     steps:
     - checkout
+    - run: sudo apt-get update && sudo apt-get install libsqlite3-dev
     - run:
         name: Check for Gemfile.lock presence
         command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
