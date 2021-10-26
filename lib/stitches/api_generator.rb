@@ -47,7 +47,7 @@ end
       copy_file "app/models/api_client.rb"
       copy_file "config/initializers/stitches.rb"
       copy_file "lib/tasks/generate_api_key.rake"
-      template "spec/features/api_spec.rb.erb", "spec/features/api_spec.rb"
+      template "spec/requests/api_spec.rb.erb", "spec/requests/api_spec.rb"
       copy_file "spec/acceptance/ping_v1_spec.rb", "spec/acceptance/ping_v1_spec.rb"
 
       migration_template "db/migrate/enable_uuid_ossp_extension.rb", "db/migrate/enable_uuid_ossp_extension.rb"
