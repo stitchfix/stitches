@@ -1,5 +1,7 @@
 {
   "build_matrix": {
-    "dependencies": ["libsqlite3-dev"]
+    "dependencies": [
+      "libsqlite3-dev"
+    ]
   }
 }
