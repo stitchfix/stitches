@@ -71,69 +71,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-2.7.5-rails-7.0:
-    docker:
-    - image: cimg/ruby:2.7.5
-      auth:
-        username: "$DOCKERHUB_USERNAME"
-        password: "$DOCKERHUB_PASSWORD"
-      environment:
-        BUNDLE_GEMFILE: Gemfile.rails-7.0
-    working_directory: "~/stitches"
-    steps:
-    - checkout
-    - run:
-        name: Check for Gemfile.lock presence
-        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
-          https://github.com/stitchfix/eng-wiki/blob/main/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
-          1>&2 ; exit 1 ; else exit 0 ; fi '
-    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
-    - run: bundle install
-    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
-        --format=doc
-    - run:
-        name: Run Additional CI Steps
-        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
-          fi
-    - run:
-        name: Notify Pager Duty
-        command: bundle exec y-notify "eng-runtime-info"
-        when: on_fail
-    - store_test_results:
-        path: "/tmp/test-results"
   ruby-3.0.3-rails-6.1:
     docker:
     - image: cimg/ruby:3.0.3
-      auth:
-        username: "$DOCKERHUB_USERNAME"
-        password: "$DOCKERHUB_PASSWORD"
-      environment:
-        BUNDLE_GEMFILE: Gemfile.rails-6.1
-    working_directory: "~/stitches"
-    steps:
-    - checkout
-    - run:
-        name: Check for Gemfile.lock presence
-        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
-          https://github.com/stitchfix/eng-wiki/blob/main/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
-          1>&2 ; exit 1 ; else exit 0 ; fi '
-    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
-    - run: bundle install
-    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
-        --format=doc
-    - run:
-        name: Run Additional CI Steps
-        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
-          fi
-    - run:
-        name: Notify Pager Duty
-        command: bundle exec y-notify "eng-runtime-info"
-        when: on_fail
-    - store_test_results:
-        path: "/tmp/test-results"
-  ruby-2.7.5-rails-6.1:
-    docker:
-    - image: cimg/ruby:2.7.5
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -169,9 +109,9 @@ workflows:
         context: org-global
         requires:
         - ruby-3.0.3-rails-7.0
-        - ruby-2.7.5-rails-7.0
+        - ruby-3.0.3-rails-7.0
         - ruby-3.0.3-rails-6.1
-        - ruby-2.7.5-rails-6.1
+        - ruby-3.0.3-rails-6.1
         filters:
           tags:
             only: /^[0-9]+\.[0-9]+\.[0-9]+((-|\.)?(RC|rc)[-\.]?\w*)?$/
@@ -191,7 +131,7 @@ workflows:
         filters:
           tags:
             only: &1 /.*/
-    - ruby-2.7.5-rails-7.0:
+    - ruby-3.0.3-rails-7.0:
         context: org-global
         filters:
           tags:
@@ -201,7 +141,7 @@ workflows:
         filters:
           tags:
             only: *1
-    - ruby-2.7.5-rails-6.1:
+    - ruby-3.0.3-rails-6.1:
         context: org-global
         filters:
           tags:
@@ -217,9 +157,9 @@ workflows:
     jobs:
     - ruby-3.0.3-rails-7.0:
         context: org-global
-    - ruby-2.7.5-rails-7.0:
+    - ruby-3.0.3-rails-7.0:
         context: org-global
     - ruby-3.0.3-rails-6.1:
         context: org-global
-    - ruby-2.7.5-rails-6.1:
+    - ruby-3.0.3-rails-6.1:
         context: org-global
