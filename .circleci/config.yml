@@ -5,7 +5,7 @@ version: 2
 jobs:
   generate-and-push-docs:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -26,7 +26,7 @@ jobs:
           docs:push; fi
   release:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -41,9 +41,9 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-3.1.1-rails-7.0:
+  ruby-3.1.2-rails-7.0:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -101,9 +101,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3.1.1-rails-6.1:
+  ruby-3.1.2-rails-6.1:
     docker:
-    - image: cimg/ruby:3.1.1
+    - image: cimg/ruby:3.1.2
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -168,9 +168,9 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-3.1.1-rails-7.0
+        - ruby-3.1.2-rails-7.0
         - ruby-3.0.4-rails-7.0
-        - ruby-3.1.1-rails-6.1
+        - ruby-3.1.2-rails-6.1
         - ruby-3.0.4-rails-6.1
         filters:
           tags:
@@ -186,7 +186,7 @@ workflows:
             only: /^[0-9]+\.[0-9]+\.[0-9]+((-|\.)?(RC|rc)[-\.]?\w*)?$/
           branches:
             ignore: /.*/
-    - ruby-3.1.1-rails-7.0:
+    - ruby-3.1.2-rails-7.0:
         context: org-global
         filters:
           tags:
@@ -196,7 +196,7 @@ workflows:
         filters:
           tags:
             only: *1
-    - ruby-3.1.1-rails-6.1:
+    - ruby-3.1.2-rails-6.1:
         context: org-global
         filters:
           tags:
@@ -215,11 +215,11 @@ workflows:
             only:
             - main
     jobs:
-    - ruby-3.1.1-rails-7.0:
+    - ruby-3.1.2-rails-7.0:
         context: org-global
     - ruby-3.0.4-rails-7.0:
         context: org-global
-    - ruby-3.1.1-rails-6.1:
+    - ruby-3.1.2-rails-6.1:
         context: org-global
     - ruby-3.0.4-rails-6.1:
         context: org-global
