@@ -1,7 +1,26 @@
 # DO NOT MODIFY - this is managed by Git Reduce in goro and generated from build-matrix.json
 #
 ---
-version: 2
+version: 2.1
+
+############
+## Github Actions Pipeline Params
+############
+
+parameters:
+  GHA_Event:
+    type: string
+    default: ""
+  GHA_Actor:
+    type: string
+    default: ""
+  GHA_Action:
+    type: string
+    default: ""
+  GHA_Meta:
+    type: string
+    default: ""
+
 jobs:
   generate-and-push-docs:
     docker:
@@ -41,7 +60,7 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-3.1.2-rails-7.0:
+  ruby-3_1_2-rails-7_0:
     docker:
     - image: cimg/ruby:3.1.2
       auth:
@@ -71,7 +90,7 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3.0.4-rails-7.0:
+  ruby-3_0_4-rails-7_0:
     docker:
     - image: cimg/ruby:3.0.4
       auth:
@@ -101,7 +120,7 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3.1.2-rails-6.1:
+  ruby-3_1_2-rails-6_1:
     docker:
     - image: cimg/ruby:3.1.2
       auth:
@@ -131,7 +150,7 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3.0.4-rails-6.1:
+  ruby-3_0_4-rails-6_1:
     docker:
     - image: cimg/ruby:3.0.4
       auth:
@@ -168,10 +187,10 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-3.1.2-rails-7.0
-        - ruby-3.0.4-rails-7.0
-        - ruby-3.1.2-rails-6.1
-        - ruby-3.0.4-rails-6.1
+        - ruby-3_1_2-rails-7_0
+        - ruby-3_0_4-rails-7_0
+        - ruby-3_1_2-rails-6_1
+        - ruby-3_0_4-rails-6_1
         filters:
           tags:
             only: /^[0-9]+\.[0-9]+\.[0-9]+((-|\.)?(RC|rc)[-.]?\w*)?$/
@@ -186,40 +205,35 @@ workflows:
             only: /^[0-9]+\.[0-9]+\.[0-9]+((-|\.)?(RC|rc)[-.]?\w*)?$/
           branches:
             ignore: /.*/
-    - ruby-3.1.2-rails-7.0:
+    - ruby-3_1_2-rails-7_0:
         context: org-global
         filters:
           tags:
             only: &1 /.*/
-    - ruby-3.0.4-rails-7.0:
+    - ruby-3_0_4-rails-7_0:
         context: org-global
         filters:
           tags:
             only: *1
-    - ruby-3.1.2-rails-6.1:
+    - ruby-3_1_2-rails-6_1:
         context: org-global
         filters:
           tags:
             only: *1
-    - ruby-3.0.4-rails-6.1:
+    - ruby-3_0_4-rails-6_1:
         context: org-global
         filters:
           tags:
             only: *1
   scheduled:
-    triggers:
-    - schedule:
-        cron: 53 20 * * 1,2,3,4,5
-        filters:
-          branches:
-            only:
-            - main
+    when:
+       equal: [ "schedule", << pipeline.parameters.GHA_Event >> ]
     jobs:
-    - ruby-3.1.2-rails-7.0:
+    - ruby-3_1_2-rails-7_0:
         context: org-global
-    - ruby-3.0.4-rails-7.0:
+    - ruby-3_0_4-rails-7_0:
         context: org-global
-    - ruby-3.1.2-rails-6.1:
+    - ruby-3_1_2-rails-6_1:
         context: org-global
-    - ruby-3.0.4-rails-6.1:
+    - ruby-3_0_4-rails-6_1:
         context: org-global
