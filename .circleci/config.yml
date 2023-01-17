@@ -183,6 +183,8 @@ jobs:
 workflows:
   version: 2
   on-commit:
+    unless:
+       equal: [ "schedule", << pipeline.parameters.GHA_Event >> ]
     jobs:
     - release:
         context: org-global
