@@ -24,7 +24,7 @@ parameters:
 jobs:
   generate-and-push-docs:
     docker:
-    - image: cimg/ruby:3.2.0
+    - image: cimg/ruby:3.2.1
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -45,7 +45,7 @@ jobs:
           docs:push; fi
   release:
     docker:
-    - image: cimg/ruby:3.2.0
+    - image: cimg/ruby:3.2.1
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -60,9 +60,9 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
-  ruby-3_2_0-rails-7_0:
+  ruby-3_2_1-rails-7_0:
     docker:
-    - image: cimg/ruby:3.2.0
+    - image: cimg/ruby:3.2.1
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -86,7 +86,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "eng-runtime-info"
+        command: bundle exec y-notify "#dev-platform-info"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -116,13 +116,13 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "eng-runtime-info"
+        command: bundle exec y-notify "#dev-platform-info"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_2_0-rails-6_1:
+  ruby-3_2_1-rails-6_1:
     docker:
-    - image: cimg/ruby:3.2.0
+    - image: cimg/ruby:3.2.1
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -146,7 +146,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "eng-runtime-info"
+        command: bundle exec y-notify "#dev-platform-info"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -176,7 +176,7 @@ jobs:
           fi
     - run:
         name: Notify Pager Duty
-        command: bundle exec y-notify "eng-runtime-info"
+        command: bundle exec y-notify "#dev-platform-info"
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
@@ -189,9 +189,9 @@ workflows:
     - release:
         context: org-global
         requires:
-        - ruby-3_2_0-rails-7_0
+        - ruby-3_2_1-rails-7_0
         - ruby-3_1_3-rails-7_0
-        - ruby-3_2_0-rails-6_1
+        - ruby-3_2_1-rails-6_1
         - ruby-3_1_3-rails-6_1
         filters:
           tags:
@@ -207,7 +207,7 @@ workflows:
             only: /^[0-9]+\.[0-9]+\.[0-9]+((-|\.)?(RC|rc)[-.]?\w*)?$/
           branches:
             ignore: /.*/
-    - ruby-3_2_0-rails-7_0:
+    - ruby-3_2_1-rails-7_0:
         context: org-global
         filters:
           tags:
@@ -217,7 +217,7 @@ workflows:
         filters:
           tags:
             only: *1
-    - ruby-3_2_0-rails-6_1:
+    - ruby-3_2_1-rails-6_1:
         context: org-global
         filters:
           tags:
@@ -231,11 +231,11 @@ workflows:
     when:
        equal: [ "schedule", << pipeline.parameters.GHA_Event >> ]
     jobs:
-    - ruby-3_2_0-rails-7_0:
+    - ruby-3_2_1-rails-7_0:
         context: org-global
     - ruby-3_1_3-rails-7_0:
         context: org-global
-    - ruby-3_2_0-rails-6_1:
+    - ruby-3_2_1-rails-6_1:
         context: org-global
     - ruby-3_1_3-rails-6_1:
         context: org-global
