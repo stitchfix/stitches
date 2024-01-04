@@ -24,7 +24,7 @@ parameters:
 jobs:
   generate-and-push-docs:
     docker:
-    - image: cimg/ruby:3.2.2
+    - image: cimg/ruby:3.3.0
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -45,7 +45,7 @@ jobs:
           docs:push; fi
   release:
     docker:
-    - image: cimg/ruby:3.2.2
+    - image: cimg/ruby:3.3.0
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -60,6 +60,36 @@ jobs:
     - run:
         name: Build/release gem to artifactory
         command: bundle exec rake push_artifactory
+  ruby-3_3_0-rails-7_1:
+    docker:
+    - image: cimg/ruby:3.3.0
+      auth:
+        username: "$DOCKERHUB_USERNAME"
+        password: "$DOCKERHUB_PASSWORD"
+      environment:
+        BUNDLE_GEMFILE: Gemfile.rails-7.1
+    working_directory: "~/stitches"
+    steps:
+    - checkout
+    - run:
+        name: Check for Gemfile.lock presence
+        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
+          https://github.com/stitchfix/eng-wiki/blob/main/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
+          1>&2 ; exit 1 ; else exit 0 ; fi '
+    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
+    - run: bundle install
+    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
+        --format=doc
+    - run:
+        name: Run Additional CI Steps
+        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
+          fi
+    - run:
+        name: Notify Pager Duty
+        command: bundle exec y-notify "#dev-platform-info"
+        when: on_fail
+    - store_test_results:
+        path: "/tmp/test-results"
   ruby-3_2_2-rails-7_1:
     docker:
     - image: cimg/ruby:3.2.2
@@ -90,14 +120,14 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_1_4-rails-7_1:
+  ruby-3_3_0-rails-7_0:
     docker:
-    - image: cimg/ruby:3.1.4
+    - image: cimg/ruby:3.3.0
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
       environment:
-        BUNDLE_GEMFILE: Gemfile.rails-7.1
+        BUNDLE_GEMFILE: Gemfile.rails-7.0
     working_directory: "~/stitches"
     steps:
     - checkout
@@ -150,14 +180,14 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_1_4-rails-7_0:
+  ruby-3_3_0-rails-6_1:
     docker:
-    - image: cimg/ruby:3.1.4
+    - image: cimg/ruby:3.3.0
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
       environment:
-        BUNDLE_GEMFILE: Gemfile.rails-7.0
+        BUNDLE_GEMFILE: Gemfile.rails-6.1
     working_directory: "~/stitches"
     steps:
     - checkout
@@ -210,36 +240,6 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_1_4-rails-6_1:
-    docker:
-    - image: cimg/ruby:3.1.4
-      auth:
-        username: "$DOCKERHUB_USERNAME"
-        password: "$DOCKERHUB_PASSWORD"
-      environment:
-        BUNDLE_GEMFILE: Gemfile.rails-6.1
-    working_directory: "~/stitches"
-    steps:
-    - checkout
-    - run:
-        name: Check for Gemfile.lock presence
-        command: ' if (test -f Gemfile.lock) then echo "Dont commit Gemfile.lock (see
-          https://github.com/stitchfix/eng-wiki/blob/main/architecture-decisions/0009-rubygem-dependencies-will-be-managed-more-explicitly.md)"
-          1>&2 ; exit 1 ; else exit 0 ; fi '
-    - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
-    - run: bundle install
-    - run: bundle exec rspec --format RspecJunitFormatter --out /tmp/test-results/rspec.xml
-        --format=doc
-    - run:
-        name: Run Additional CI Steps
-        command: if [ -e bin/additional-ci-steps ]; then bin/additional-ci-steps;
-          fi
-    - run:
-        name: Notify Pager Duty
-        command: bundle exec y-notify "#dev-platform-info"
-        when: on_fail
-    - store_test_results:
-        path: "/tmp/test-results"
 workflows:
   version: 2
   on-commit:
@@ -249,15 +249,15 @@ workflows:
     - release:
         context: org-global
         requires:
+        - ruby-3_3_0-rails-7_1
         - ruby-3_2_2-rails-7_1
-        - ruby-3_1_4-rails-7_1
+        - ruby-3_3_0-rails-7_0
         - ruby-3_2_2-rails-7_0
-        - ruby-3_1_4-rails-7_0
+        - ruby-3_3_0-rails-6_1
         - ruby-3_2_2-rails-6_1
-        - ruby-3_1_4-rails-6_1
         filters:
           tags:
-            only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
+            only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:(-|\\.)(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
           branches:
             ignore: /.*/
     - generate-and-push-docs:
@@ -266,15 +266,20 @@ workflows:
         - release
         filters:
           tags:
-            only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
+            only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:(-|\\.)(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
           branches:
             ignore: /.*/
-    - ruby-3_2_2-rails-7_1:
+    - ruby-3_3_0-rails-7_1:
         context: org-global
         filters:
           tags:
             only: &1 /.*/
-    - ruby-3_1_4-rails-7_1:
+    - ruby-3_2_2-rails-7_1:
+        context: org-global
+        filters:
+          tags:
+            only: *1
+    - ruby-3_3_0-rails-7_0:
         context: org-global
         filters:
           tags:
@@ -284,17 +289,12 @@ workflows:
         filters:
           tags:
             only: *1
-    - ruby-3_1_4-rails-7_0:
+    - ruby-3_3_0-rails-6_1:
         context: org-global
         filters:
           tags:
             only: *1
     - ruby-3_2_2-rails-6_1:
-        context: org-global
-        filters:
-          tags:
-            only: *1
-    - ruby-3_1_4-rails-6_1:
         context: org-global
         filters:
           tags:
@@ -303,15 +303,15 @@ workflows:
     when:
        equal: [ "schedule", << pipeline.parameters.GHA_Event >> ]
     jobs:
+    - ruby-3_3_0-rails-7_1:
+        context: org-global
     - ruby-3_2_2-rails-7_1:
         context: org-global
-    - ruby-3_1_4-rails-7_1:
+    - ruby-3_3_0-rails-7_0:
         context: org-global
     - ruby-3_2_2-rails-7_0:
         context: org-global
-    - ruby-3_1_4-rails-7_0:
+    - ruby-3_3_0-rails-6_1:
         context: org-global
     - ruby-3_2_2-rails-6_1:
-        context: org-global
-    - ruby-3_1_4-rails-6_1:
         context: org-global
