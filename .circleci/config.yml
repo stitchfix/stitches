@@ -90,9 +90,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_2_2-rails-7_1:
+  ruby-3_2_3-rails-7_1:
     docker:
-    - image: cimg/ruby:3.2.2
+    - image: cimg/ruby:3.2.3
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -150,9 +150,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_2_2-rails-7_0:
+  ruby-3_2_3-rails-7_0:
     docker:
-    - image: cimg/ruby:3.2.2
+    - image: cimg/ruby:3.2.3
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -210,9 +210,9 @@ jobs:
         when: on_fail
     - store_test_results:
         path: "/tmp/test-results"
-  ruby-3_2_2-rails-6_1:
+  ruby-3_2_3-rails-6_1:
     docker:
-    - image: cimg/ruby:3.2.2
+    - image: cimg/ruby:3.2.3
       auth:
         username: "$DOCKERHUB_USERNAME"
         password: "$DOCKERHUB_PASSWORD"
@@ -250,11 +250,11 @@ workflows:
         context: org-global
         requires:
         - ruby-3_3_0-rails-7_1
-        - ruby-3_2_2-rails-7_1
+        - ruby-3_2_3-rails-7_1
         - ruby-3_3_0-rails-7_0
-        - ruby-3_2_2-rails-7_0
+        - ruby-3_2_3-rails-7_0
         - ruby-3_3_0-rails-6_1
-        - ruby-3_2_2-rails-6_1
+        - ruby-3_2_3-rails-6_1
         filters:
           tags:
             only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:(-|\\.)(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
@@ -274,7 +274,7 @@ workflows:
         filters:
           tags:
             only: &1 /.*/
-    - ruby-3_2_2-rails-7_1:
+    - ruby-3_2_3-rails-7_1:
         context: org-global
         filters:
           tags:
@@ -284,7 +284,7 @@ workflows:
         filters:
           tags:
             only: *1
-    - ruby-3_2_2-rails-7_0:
+    - ruby-3_2_3-rails-7_0:
         context: org-global
         filters:
           tags:
@@ -294,7 +294,7 @@ workflows:
         filters:
           tags:
             only: *1
-    - ruby-3_2_2-rails-6_1:
+    - ruby-3_2_3-rails-6_1:
         context: org-global
         filters:
           tags:
@@ -305,13 +305,13 @@ workflows:
     jobs:
     - ruby-3_3_0-rails-7_1:
         context: org-global
-    - ruby-3_2_2-rails-7_1:
+    - ruby-3_2_3-rails-7_1:
         context: org-global
     - ruby-3_3_0-rails-7_0:
         context: org-global
-    - ruby-3_2_2-rails-7_0:
+    - ruby-3_2_3-rails-7_0:
         context: org-global
     - ruby-3_3_0-rails-6_1:
         context: org-global
-    - ruby-3_2_2-rails-6_1:
+    - ruby-3_2_3-rails-6_1:
         context: org-global
