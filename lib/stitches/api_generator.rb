@@ -18,7 +18,7 @@ module Stitches
         gem "rspec_api_documentation"
       end
 
-      Bundler.with_clean_env do
+      Bundler.with_unbundled_env do
         run "bundle install"
       end
       generate "rspec:install"

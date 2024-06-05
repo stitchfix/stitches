@@ -6,6 +6,5 @@ module Stitches
   class Railtie < Rails::Railtie
     config.app_middleware.use Stitches::ApiKey
     config.app_middleware.use Stitches::ValidMimeType
-
   end
 end
