@@ -13,7 +13,6 @@ require File.expand_path("fake_app/config/environment.rb", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
-binding.irb
 ActiveRecord::Base.establish_connection adapter: "postgresql", url: ENV["DATABASE_URL"]
 
 load 'fake_app/db/schema_modern.rb'
