@@ -1,6 +1,6 @@
 require 'rails_helper.rb'
 
-feature "general API stuff" do
+RSpec.describe  "general API stuff", type: :request  do
   scenario "good request" do
     headers = TestHeaders.new
 <% if ::Rails::VERSION::MAJOR >= 5 -%>
