@@ -1,6 +1,8 @@
 pkg
 spec/reports
 spec/fake_app/log/
+spec/fake_app/tmp/
+spec/fake_app/db/schema.rb
 .vimrc
 *.sw?
 .idea/
@@ -12,3 +14,4 @@ config/database.yml
 Gemfile.lock
 Gemfile.*.lock
 .projections.json
+*.local

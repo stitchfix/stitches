@@ -1,7 +1,5 @@
 Create Microservices in Rails by pretty much just writing regular Rails code.
 
-![build status](https://travis-ci.org/stitchfix/stitches.svg?branch=master)
-
 This gem provides:
 
 - transparent API key authentication.
@@ -54,16 +52,16 @@ how long ago the API key was disabled.
 
 ```ruby
 Stitches.configure do |config|
-  config.disabled_key_leniency_in_seconds = 3 * 24 * 60 * 60 # Time in seconds, defaults to three days 
-  config.disabled_key_leniency_error_log_threshold_in_seconds = 2 * 24 * 60 * 60 # Time in seconds, defaults to two days 
+  config.disabled_key_leniency_in_seconds = 3 * 24 * 60 * 60 # Time in seconds, defaults to three days
+  config.disabled_key_leniency_error_log_threshold_in_seconds = 2 * 24 * 60 * 60 # Time in seconds, defaults to two days
 end
 ```
 
-If a disabled key is used within the `disabled_key_leniency_in_seconds`, it will be allowed. 
+If a disabled key is used within the `disabled_key_leniency_in_seconds`, it will be allowed.
 
-Anytime a disabled key is used a log will be generated. If it is before the 
+Anytime a disabled key is used a log will be generated. If it is before the
 `disabled_key_leniency_error_log_threshold_in_seconds` it will be a warning log message, if it is after that, it will be
-an error message. `disabled_key_leniency_error_log_threshold_in_seconds` should never be a greater number than 
+an error message. `disabled_key_leniency_error_log_threshold_in_seconds` should never be a greater number than
 `disabled_key_leniency_in_seconds`, as this provides an escallating series of warnings before finally disabling access.
 
 - If you are upgrading from a version older than 3.3.0 you need to run three generators, two of which create database

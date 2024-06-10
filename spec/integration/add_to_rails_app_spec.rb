@@ -43,7 +43,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
     gem_path = File.expand_path("../..", File.dirname(__FILE__))
     use_local_stitches = %{echo "gem 'stitches', path: '#{gem_path}'" >> Gemfile}
 
-    Bundler.with_clean_env do
+    Bundler.with_unbundled_env do
       FileUtils.chdir work_dir do
         run rails_new
 
