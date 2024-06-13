@@ -23,6 +23,8 @@ module Stitches
   protected
 
     def do_call(env)
+      return @app.call(env) if Stitches.configuration.disable_api_key_support
+
       authorization = env["HTTP_AUTHORIZATION"]
       if authorization
         if authorization =~ /#{configuration.custom_http_auth_scheme}\s+key=(.*)\s*$/
