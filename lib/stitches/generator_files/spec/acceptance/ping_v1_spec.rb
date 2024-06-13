@@ -11,7 +11,8 @@ resource "Ping (V1)" do
     response_field :status, "The status of the ping", scope: "ping", "Type" => "String"
     example "ping the server to validate your client's happy path" do
 
-      header "Authorization", "CustomKeyAuth key=#{api_client.key}"
+      # Only needed if you're using API Key authentication
+      # header "Authorization", "CustomKeyAuth key=#{api_client.key}"
       do_request
 
       result = JSON.parse(response_body)
@@ -33,7 +34,8 @@ resource "Ping (V1)" do
 
     example "ping the server to validate your client's error handling" do
 
-      header "Authorization", "CustomKeyAuth key=#{api_client.key}"
+      # Only needed if you're using API Key authentication
+      # header "Authorization", "CustomKeyAuth key=#{api_client.key}"
       do_request
 
       result = JSON.parse(response_body)

@@ -8,6 +8,10 @@ Stitches.configure do |configuration|
   # but generally should be a string with no spaces or special characters.
   configuration.custom_http_auth_scheme = "CustomKeyAuth"
 
+  # Disable API Key feature. Useful if you're not using the auth features of
+  # the library.
+  configuration.disable_api_key_support = true
+
   # Env var that gets the primary key of the authenticated ApiKey
   # for access in your controllers, so they don't need to re-parse the header
   # configuration.env_var_to_hold_api_client_primary_key = "YOUR_ENV_VAR"

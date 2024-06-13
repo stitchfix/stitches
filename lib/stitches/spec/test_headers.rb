@@ -34,6 +34,8 @@ private
   end
 
   def set_authorization_header(headers,options)
+    return nil if Stitches.configuration.disable_api_key_support
+
     api_client_key = if options.key?(:api_client)
                        options.delete(:api_client).try(:key)
                      else

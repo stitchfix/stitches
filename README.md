@@ -26,9 +26,20 @@ bundle install
 
 Then, set it up:
 
-```
+```bash
 > bin/rails generate stitches:api
-> bundle exec rake db:migrate
+> bin/rails generate stitches:api_migration # only if you're using API key authentication
+> bundle exec rake db:migrate               # only if you're using API key authentication
+```
+
+### Disable API Key Support
+
+If you're not using the API Key authentication feature of the library, configure stitches:
+
+```ruby
+Stitches.configure do |config|
+  config.disable_api_key_support = true
+end
 ```
 
 ### Upgrading from an older version

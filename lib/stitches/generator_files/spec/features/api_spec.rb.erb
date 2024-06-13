@@ -48,6 +48,8 @@ feature "general API stuff" do
     expect(response).to have_api_error(code: "test", message: "OH NOES!")
   end
 
+<%# Remove always false if statement to enable API Key authentication %>
+<% if false %>
   scenario "no auth header given" do
     headers = TestHeaders.new(api_client: nil)
 <% if ::Rails::VERSION::MAJOR >= 5 -%>
@@ -80,6 +82,7 @@ feature "general API stuff" do
 
     expect(response).to have_auth_error
   end
+<% end %>
 
   scenario "no version" do
     headers = TestHeaders.new(version: nil)
