@@ -6,7 +6,7 @@ class TestHeaders
       "Accept"       => full_mimetype,
       "Content-Type" => full_mimetype,
     }.tap { |headers|
-      set_authorization_header(headers,options)
+      set_authorization_header(headers,options) unless Stitches.configuration.disable_api_key_support
     }
   end
 
@@ -34,8 +34,6 @@ private
   end
 
   def set_authorization_header(headers,options)
-    return nil if Stitches.configuration.disable_api_key_support
-
     api_client_key = if options.key?(:api_client)
                        options.delete(:api_client).try(:key)
                      else
