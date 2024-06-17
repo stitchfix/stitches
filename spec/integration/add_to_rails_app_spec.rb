@@ -61,6 +61,7 @@ RSpec.describe "Adding Stitches to a New Rails App", :integration do
 
   it "works as described in the README" do
     run "bin/rails generate stitches:api"
+    run "bin/rails generate stitches:api_migration"
 
     # Yuck!  So much duplication!  BUT: Rails app templates have a notoriously silent failure mode, so mostly
     # what this is doing is ensuring that the generator inserted stuff when asked and that the very basics of what happens

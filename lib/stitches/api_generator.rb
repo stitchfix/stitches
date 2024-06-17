@@ -2,13 +2,7 @@ require 'rails/generators'
 
 module Stitches
   class ApiGenerator < Rails::Generators::Base
-    include Rails::Generators::Migration
-
     source_root(File.expand_path(File.join(File.dirname(__FILE__), "generator_files")))
-
-    def self.next_migration_number(path)
-      Time.now.utc.strftime("%Y%m%d%H%M%S")
-    end
 
     desc "Bootstraps your API service with a basic ping controller and spec to ensure everything is setup properly"
     def bootstrap_api
@@ -44,15 +38,9 @@ end
       copy_file "app/controllers/api/v2.rb"
       copy_file "app/controllers/api/v1/pings_controller.rb"
       copy_file "app/controllers/api/v2/pings_controller.rb"
-      copy_file "app/models/api_client.rb"
       copy_file "config/initializers/stitches.rb"
-      copy_file "lib/tasks/generate_api_key.rake"
       template "spec/features/api_spec.rb.erb", "spec/features/api_spec.rb"
       copy_file "spec/acceptance/ping_v1_spec.rb", "spec/acceptance/ping_v1_spec.rb"
-
-      migration_template "db/migrate/enable_uuid_ossp_extension.rb", "db/migrate/enable_uuid_ossp_extension.rb"
-      sleep 1 # allow clock to tick so we get different numbers
-      migration_template "db/migrate/create_api_clients.rb", "db/migrate/create_api_clients.rb"
 
       inject_into_file 'spec/rails_helper.rb', %q{
 config.include RSpec::Rails::RequestExampleGroup, type: :feature

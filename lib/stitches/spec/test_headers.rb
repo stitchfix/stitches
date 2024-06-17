@@ -6,7 +6,7 @@ class TestHeaders
       "Accept"       => full_mimetype,
       "Content-Type" => full_mimetype,
     }.tap { |headers|
-      set_authorization_header(headers,options)
+      set_authorization_header(headers,options) unless Stitches.configuration.disable_api_key_support
     }
   end
 
