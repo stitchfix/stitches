@@ -36,6 +36,10 @@ describe Stitches::Configuration do
       expect(Stitches.configuration.env_var_to_hold_api_client_primary_key).to eq("STITCHES_API_CLIENT_ID")
     end
 
+    it "sets a default of true for ignore_nil" do
+      expect(Stitches.configuration.ignore_nil).to be true
+    end
+
     it "defaults to 0 for max_cache_ttl" do
       expect(Stitches.configuration.max_cache_ttl).to eq(0)
     end

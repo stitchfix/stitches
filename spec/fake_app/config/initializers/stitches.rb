@@ -12,6 +12,10 @@ Stitches.configure do |configuration|
   # for access in your controllers, so they don't need to re-parse the header
   # configuration.env_var_to_hold_api_client_primary_key = "YOUR_ENV_VAR"
 
+  # Configures whether to cache nil values
+  # Default is true
+  # configuration.ignore_nil = true
+
   # Configures how long to cache ApiKeys in memory (In Seconds)
   # A value of 0 will disable the cache entierly
   # Default is 0

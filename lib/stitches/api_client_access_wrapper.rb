@@ -66,6 +66,7 @@ module Stitches::ApiClientAccessWrapper
 
   def self.api_key_cache
     @api_key_cache ||= LruRedux::TTL::ThreadSafeCache.new(
+      Stitches.configuration.ignore_nil,
       Stitches.configuration.max_cache_size,
       Stitches.configuration.max_cache_ttl,
     )

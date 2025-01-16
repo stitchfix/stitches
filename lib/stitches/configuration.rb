@@ -13,6 +13,7 @@ class Stitches::Configuration
     @custom_http_auth_scheme = UnsetString.new("custom_http_auth_scheme")
     @env_var_to_hold_api_client_primary_key = NonNullString.new("env_var_to_hold_api_client_primary_key","STITCHES_API_CLIENT_ID")
     @env_var_to_hold_api_client= NonNullString.new("env_var_to_hold_api_client","STITCHES_API_CLIENT")
+    @ignore_nil = true
     @max_cache_ttl = NonNullInteger.new("max_cache_ttl", 0)
     @max_cache_size = NonNullInteger.new("max_cache_size", 0)
     @disabled_key_leniency_in_seconds = ActiveSupport::Duration.days(3)
@@ -20,7 +21,7 @@ class Stitches::Configuration
     @disable_api_key_support = false
   end
 
-  attr_accessor :disabled_key_leniency_in_seconds, :disabled_key_leniency_error_log_threshold_in_seconds, :disable_api_key_support
+  attr_accessor :ignore_nil, :disabled_key_leniency_in_seconds, :disabled_key_leniency_error_log_threshold_in_seconds, :disable_api_key_support
 
   # A RegExp that allows URLS around the mime type and api key requirements.
   # nil means that ever request must have a proper mime type and api key.
