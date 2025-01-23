@@ -41,7 +41,13 @@ module Stitches
           unauthorized_response("bad authorization type")
         end
       else
-        unauthorized_response("no authorization header")
+        message = "no authorization header"
+
+        if Rails.env.test? || Rails.env.development?
+          message += " (Development/Test Env Hint: Blocked by stitches; confirm your authorization header is set OR check the `allowlist_regex` config for this path)"
+        end
+
+        unauthorized_response(message)
       end
     end
 
