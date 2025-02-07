@@ -15,21 +15,21 @@ parameters:
     default: ""
   old_ruby:
     type: string
-    default: "3.2.4"
+    default: "3.3.7"
   current_ruby:
     type: string
-    default: "3.3.2"
+    default: "3.4.2"
   old_rails:
     type: string
-    default: "7.0.8.4"
+    default: "7.2.2.1"
   current_rails:
     type: string
-    default: "7.1.3.4"
+    default: "8.0.1"
 
 jobs:
   generate-and-push-docs:
     docker:
-      - image: cimg/ruby:3.3.2
+      - image: cimg/ruby:3.3.7
         auth:
           username: "$DOCKERHUB_USERNAME"
           password: "$DOCKERHUB_PASSWORD"
@@ -52,7 +52,7 @@ jobs:
             docs:push; fi
   release:
     docker:
-      - image: cimg/ruby:3.3.2
+      - image: cimg/ruby:3.3.7
         auth:
           username: "$DOCKERHUB_USERNAME"
           password: "$DOCKERHUB_PASSWORD"

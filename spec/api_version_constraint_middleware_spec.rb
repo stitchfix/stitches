@@ -40,9 +40,9 @@ RSpec.describe "/api/hellos", type: :request do
     let(:version) { 6 }
 
     it "fails to map to a controller" do
-      expect {
-        get "/api/hellos", headers: headers
-      }.to raise_error(ActionController::RoutingError)
+      get "/api/hellos", headers: headers
+
+      expect(response).to be_not_found
     end
   end
 
@@ -50,9 +50,9 @@ RSpec.describe "/api/hellos", type: :request do
     let(:accept_header) { "application/json" }
 
     it "fails to map to a controller" do
-      expect {
-        get "/api/hellos", headers: headers
-      }.to raise_error(ActionController::RoutingError)
+      get "/api/hellos", headers: headers
+
+      expect(response).to be_not_found
     end
   end
 end
