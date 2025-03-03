@@ -180,6 +180,12 @@ Also, the integration test does a lot of "testing the implementation", but since
 failing with a successful result, we have to make sure that the various `inject_into_file` calls are actually working. Do not do
 any fancy refactors here, just keep it up to date.
 
+## Ruby / Rails version support
+
+This gem attempts to support the most recent 2 major/minor versions of Ruby and Rails. This is a moving
+target, and we make a best effort to track to this policy. Older versions _may_ work, but supporting
+those versions is outside of the scope of what we intend to maintain.
+
 ## Releases
 
 See the release process for open source gems in the Stitch Fix engineering wiki under technical topics.
