@@ -15,16 +15,16 @@ parameters:
     default: ""
   old_ruby:
     type: string
-    default: "3.3.7"
+    default: "3.3.9"
   current_ruby:
     type: string
-    default: "3.4.2"
+    default: "3.4.5"
   old_rails:
     type: string
-    default: "7.2.2.1"
+    default: "8.0.3"
   current_rails:
     type: string
-    default: "8.0.1"
+    default: "8.1.2"
 
 jobs:
   generate-and-push-docs:
