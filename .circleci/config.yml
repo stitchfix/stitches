@@ -126,7 +126,7 @@ jobs:
             fi
       - run:
           name: Notify Pager Duty
-          command: bundle exec y-notify "#app-platform-ops"
+          command: bundle exec y-notify "#pire-ops"
           when: on_fail
       - store_test_results:
           path: "/tmp/test-results"
