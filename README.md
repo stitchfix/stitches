@@ -32,13 +32,13 @@ Then, set it up:
 > bundle exec rake db:migrate               # only if you're using API key authentication
 ```
 
-### Disable API Key Support
+### Enable API Key Support
 
-If you're not using the API Key authentication feature of the library, configure stitches:
+API key authentication is disabled by default. To enable it:
 
 ```ruby
 Stitches.configure do |config|
-  config.disable_api_key_support = true
+  config.disable_api_key_support = false
 end
 ```
 
