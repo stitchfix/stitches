@@ -44,8 +44,8 @@ describe Stitches::Configuration do
       expect(Stitches.configuration.max_cache_size).to eq(0)
     end
 
-    it "sets a default of false for disable_api_key_support" do
-      expect(Stitches.configuration.disable_api_key_support).to be false
+    it "sets a default of true for disable_api_key_support" do
+      expect(Stitches.configuration.disable_api_key_support).to be true
     end
 
     it "blows up if you try to use custom_http_auth_scheme without having set it" do
