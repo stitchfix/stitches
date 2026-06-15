@@ -2,13 +2,15 @@ require 'rails_helper'
 
 describe Stitches::CallingServiceName do
   let(:headers) { {} }
-  let(:request) { double("request", headers: headers) }
-  let(:api_client) { nil }
+  let(:fake_request) { double("request", headers: headers) }
+  let(:fake_api_client) { nil }
   let(:fake_controller) {
+    req = fake_request
+    client = fake_api_client
     Object.new.tap { |c|
       c.extend(described_class)
-      c.define_singleton_method(:request) { request }
-      c.define_singleton_method(:api_client) { api_client }
+      c.define_singleton_method(:request) { req }
+      c.define_singleton_method(:api_client) { client }
     }
   }
 
@@ -21,7 +23,7 @@ describe Stitches::CallingServiceName do
       end
 
       context "and api_client is also present" do
-        let(:api_client) { double("ApiClient", name: "other-service") }
+        let(:fake_api_client) { double("ApiClient", name: "other-service") }
 
         it "prefers the header" do
           expect(fake_controller.calling_service_name).to eq("kingmob")
@@ -30,7 +32,7 @@ describe Stitches::CallingServiceName do
     end
 
     context "when header is absent but api_client is present" do
-      let(:api_client) { double("ApiClient", name: "mobile-service") }
+      let(:fake_api_client) { double("ApiClient", name: "mobile-service") }
 
       it "returns the api_client name" do
         expect(fake_controller.calling_service_name).to eq("mobile-service")
@@ -39,7 +41,7 @@ describe Stitches::CallingServiceName do
 
     context "when header is blank" do
       let(:headers) { {"X-StitchFix-Calling-Service" => ""} }
-      let(:api_client) { double("ApiClient", name: "fallback-service") }
+      let(:fake_api_client) { double("ApiClient", name: "fallback-service") }
 
       it "treats blank as absent and falls through to api_client" do
         expect(fake_controller.calling_service_name).to eq("fallback-service")
@@ -53,7 +55,7 @@ describe Stitches::CallingServiceName do
     end
 
     context "when api_client is nil" do
-      let(:api_client) { nil }
+      let(:fake_api_client) { nil }
 
       it "returns 'unknown'" do
         expect(fake_controller.calling_service_name).to eq("unknown")
