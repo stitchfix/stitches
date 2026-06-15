@@ -42,6 +42,78 @@ Stitches.configure do |config|
 end
 ```
 
+### Caller Identification via `X-StitchFix-Calling-Service`
+
+When API key auth is disabled, services lose the ability to identify which
+internal service is calling them. The `Stitches::CallingServiceName` concern
+provides a replacement that works with or without API keys enabled.
+
+**Include the concern in your API controller:**
+
+```ruby
+class Api::ApiController < ActionController::API
+  include Stitches::CallingServiceName
+
+  # Replace api_client.name with calling_service_name anywhere you need
+  # to know who the caller is (stats, routing, updated_by, etc.)
+end
+```
+
+For controllers that don't inherit from your ApiController (e.g. Devise
+controllers), include the concern directly:
+
+```ruby
+class Api::V1::SessionsController < Devise::SessionsController
+  include Stitches::CallingServiceName
+end
+```
+
+**Resolution order:**
+
+1. `X-StitchFix-Calling-Service` request header (preferred)
+2. `api_client&.name` — the stitches-authenticated ApiClient (works when API keys are enabled)
+3. `"unknown"` — fallback when neither is available
+
+This is backwards compatible. When `disable_api_key_support` is false, the
+stitches middleware still populates `api_client`, so the fallback returns the
+authenticated name. When true, callers identify themselves via the header.
+
+**Client-side setup:**
+
+Clients using `stitchfix-api_client` (v5.1+) automatically send this header.
+The value is derived from the `app_name` config option or `ENV["APP_NAME"]`:
+
+```ruby
+MyServiceClient.new(
+  endpoint: "https://my-service.internal",
+  app_name: "kingmob"  # sent as X-StitchFix-Calling-Service
+)
+```
+
+If `app_name` is not set, `ENV["APP_NAME"]` is used (typically set in
+production deployments). If neither is available, the header is not sent.
+
+#### Security considerations
+
+`X-StitchFix-Calling-Service` is a **self-declared, unsigned header**. Any
+caller that can reach your service can set it to any value. This means:
+
+- **Do not use `calling_service_name` as a sole authorization mechanism for
+  sensitive operations** (e.g. granting admin tokens, bypassing verification
+  flows) unless the network layer guarantees that only the legitimate service
+  can reach the endpoint.
+- **Strip this header at public ingress points** (Traefik, ALB, API gateway)
+  to prevent external callers from spoofing internal service identities.
+  Internal-only traffic should be the only source of this header.
+- **This header replaces API key-based identity, not authorization.** API
+  keys provided a weak form of authentication (possession of a shared secret).
+  This header provides identification only. If you need to verify the caller's
+  identity cryptographically, use mTLS or a service mesh AuthorizationPolicy.
+- **Safe uses:** stats tagging, logging, `updated_by` audit fields, routing
+  hints, non-security-critical behavioral branching.
+- **Unsafe without network enforcement:** access control decisions, privilege
+  escalation gates, bypassing user-facing safety flows.
+
 ### Upgrading from an older version
 
 - When upgrading to version 4.0.0 and above you may now take advantage of an in-memory cache
