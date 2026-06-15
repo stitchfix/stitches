@@ -6,7 +6,7 @@ module Stitches
       @calling_service_name ||=
         request.headers[HEADER].presence ||
         api_client&.name ||
-        "unknown"
+        "N/A"
     end
   end
 end
