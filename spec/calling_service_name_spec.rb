@@ -50,15 +50,15 @@ describe Stitches::CallingServiceName do
 
     context "when neither header nor api_client is present" do
       it "returns 'unknown'" do
-        expect(fake_controller.calling_service_name).to eq("N/A")
+        expect(fake_controller.calling_service_name).to eq("")
       end
     end
 
     context "when api_client is nil" do
       let(:fake_api_client) { nil }
 
-      it "returns 'N/A'" do
-        expect(fake_controller.calling_service_name).to eq("N/A")
+      it "returns empty string" do
+        expect(fake_controller.calling_service_name).to eq("")
       end
     end
 
@@ -71,8 +71,8 @@ describe Stitches::CallingServiceName do
         }
       }
 
-      it "returns 'N/A'" do
-        expect(fake_controller.calling_service_name).to eq("N/A")
+      it "returns empty string" do
+        expect(fake_controller.calling_service_name).to eq("")
       end
 
       context "and header is present" do
