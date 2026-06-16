@@ -57,8 +57,30 @@ describe Stitches::CallingServiceName do
     context "when api_client is nil" do
       let(:fake_api_client) { nil }
 
-      it "returns 'unknown'" do
+      it "returns 'N/A'" do
         expect(fake_controller.calling_service_name).to eq("N/A")
+      end
+    end
+
+    context "when api_client method is not defined" do
+      let(:fake_controller) {
+        req = fake_request
+        Object.new.tap { |c|
+          c.extend(described_class)
+          c.define_singleton_method(:request) { req }
+        }
+      }
+
+      it "returns 'N/A'" do
+        expect(fake_controller.calling_service_name).to eq("N/A")
+      end
+
+      context "and header is present" do
+        let(:headers) { {"X-StitchFix-Calling-Service" => "fixops"} }
+
+        it "returns the header value" do
+          expect(fake_controller.calling_service_name).to eq("fixops")
+        end
       end
     end
   end

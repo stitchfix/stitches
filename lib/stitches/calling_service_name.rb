@@ -5,7 +5,7 @@ module Stitches
     def calling_service_name
       @calling_service_name ||=
         request.headers[HEADER].presence ||
-        api_client&.name ||
+        (respond_to?(:api_client, true) && api_client&.name) ||
         "N/A"
     end
   end
