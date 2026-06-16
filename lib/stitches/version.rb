@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Stitches
-  VERSION = '5.1.0.RC1'
+  VERSION = '5.1.0.RC2'
 end
