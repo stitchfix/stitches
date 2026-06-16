@@ -72,7 +72,7 @@ end
 
 1. `X-StitchFix-Calling-Service` request header (preferred)
 2. `api_client&.name` — the stitches-authenticated ApiClient (works when API keys are enabled)
-3. `"N/A"` — fallback when neither is available
+3. `""` (empty string) — fallback when neither is available
 
 This is backwards compatible. When `disable_api_key_support` is false, the
 stitches middleware still populates `api_client`, so the fallback returns the
