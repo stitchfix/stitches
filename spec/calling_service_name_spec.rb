@@ -62,9 +62,25 @@ describe Stitches::CallingServiceName do
 
   end
 
-  describe "::HEADER" do
-    it "is the expected header name" do
-      expect(described_class::HEADER).to eq("X-StitchFix-Calling-Service")
+  describe "configurable header" do
+    it "defaults to X-StitchFix-Calling-Service" do
+      expect(Stitches.configuration.calling_service_header).to eq("X-StitchFix-Calling-Service")
+    end
+
+    context "when configured to a custom header" do
+      let(:headers) { {"X-Custom-Caller" => "my-service"} }
+
+      before do
+        Stitches.configuration.calling_service_header = "X-Custom-Caller"
+      end
+
+      after do
+        Stitches.configuration.reset_to_defaults!
+      end
+
+      it "reads from the configured header" do
+        expect(fake_controller.calling_service_name).to eq("my-service")
+      end
     end
   end
 end
