@@ -5,7 +5,7 @@ module Stitches
     def calling_service_name
       @calling_service_name ||=
         request.headers[HEADER].presence ||
-        (respond_to?(:api_client, true) && api_client&.name) ||
+        request.env[Stitches.configuration.env_var_to_hold_api_client]&.name ||
         ""
     end
   end
