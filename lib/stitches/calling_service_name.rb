@@ -1,10 +1,17 @@
 module Stitches
   module CallingServiceName
+    DEFAULT_CALLING_SERVICE_HEADER = "X-StitchFix-Calling-Service"
+
     def calling_service_name
       @calling_service_name ||=
-        request.headers[Stitches.configuration.calling_service_header].presence ||
-        request.env[Stitches.configuration.env_var_to_hold_api_client]&.name ||
-        ""
+        request.headers[calling_service_header_name].presence || ""
+    end
+
+    private
+
+    def calling_service_header_name
+      configured = Stitches.configuration.calling_service_header
+      configured.present? ? configured : DEFAULT_CALLING_SERVICE_HEADER
     end
   end
 end

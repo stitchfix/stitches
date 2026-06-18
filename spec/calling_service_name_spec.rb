@@ -2,8 +2,7 @@ require 'rails_helper'
 
 describe Stitches::CallingServiceName do
   let(:headers) { {} }
-  let(:env) { {} }
-  let(:fake_request) { double("request", headers: headers, env: env) }
+  let(:fake_request) { double("request", headers: headers) }
   let(:fake_controller) {
     req = fake_request
     Object.new.tap { |c|
@@ -13,53 +12,27 @@ describe Stitches::CallingServiceName do
   }
 
   describe "#calling_service_name" do
-    context "when X-StitchFix-Calling-Service header is present" do
+    context "when the header is present" do
       let(:headers) { {"X-StitchFix-Calling-Service" => "kingmob"} }
 
       it "returns the header value" do
         expect(fake_controller.calling_service_name).to eq("kingmob")
       end
+    end
 
-      context "and env var client is also present" do
-        let(:env) { {Stitches.configuration.env_var_to_hold_api_client => double(name: "other-service")} }
-
-        it "prefers the header" do
-          expect(fake_controller.calling_service_name).to eq("kingmob")
-        end
+    context "when the header is absent" do
+      it "returns empty string" do
+        expect(fake_controller.calling_service_name).to eq("")
       end
     end
 
-    context "when header is absent but env var client is present" do
-      let(:env) { {Stitches.configuration.env_var_to_hold_api_client => double(name: "mobile-service")} }
-
-      it "returns the client name from env" do
-        expect(fake_controller.calling_service_name).to eq("mobile-service")
-      end
-    end
-
-    context "when header is blank" do
+    context "when the header is blank" do
       let(:headers) { {"X-StitchFix-Calling-Service" => ""} }
-      let(:env) { {Stitches.configuration.env_var_to_hold_api_client => double(name: "fallback-service")} }
-
-      it "treats blank as absent and falls through to env var client" do
-        expect(fake_controller.calling_service_name).to eq("fallback-service")
-      end
-    end
-
-    context "when neither header nor env var client is present" do
-      it "returns empty string" do
-        expect(fake_controller.calling_service_name).to eq("")
-      end
-    end
-
-    context "when env var client is nil" do
-      let(:env) { {Stitches.configuration.env_var_to_hold_api_client => nil} }
 
       it "returns empty string" do
         expect(fake_controller.calling_service_name).to eq("")
       end
     end
-
   end
 
   describe "configurable header" do
@@ -70,13 +43,8 @@ describe Stitches::CallingServiceName do
     context "when configured to a custom header" do
       let(:headers) { {"X-Custom-Caller" => "my-service"} }
 
-      before do
-        Stitches.configuration.calling_service_header = "X-Custom-Caller"
-      end
-
-      after do
-        Stitches.configuration.reset_to_defaults!
-      end
+      before { Stitches.configuration.calling_service_header = "X-Custom-Caller" }
+      after { Stitches.configuration.reset_to_defaults! }
 
       it "reads from the configured header" do
         expect(fake_controller.calling_service_name).to eq("my-service")
