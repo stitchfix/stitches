@@ -1,4 +1,5 @@
 class Api::ApiController < ActionController::API
+  include Stitches::CallingServiceName
   include Stitches::Deprecation
   #
   # The order of the rescue_from blocks is important - ActiveRecord::RecordNotFound must come after StandardError,
