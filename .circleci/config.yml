@@ -26,6 +26,9 @@ parameters:
     type: string
     default: "8.1.2"
 
+orbs:
+  stitchfix_build: stitchfix/build@dev:master
+
 jobs:
   generate-and-push-docs:
     docker:
@@ -45,29 +48,12 @@ jobs:
             docs:generate:custom ; elif [[ $(bundle exec rake -T docs:generate) ]];
             then echo "Generating docs using rake task docs:generate" ; bundle exec
             rake docs:generate ; else echo "Skipping doc generation" ; exit 0 ; fi '
+      - stitchfix_build/aws_cli_setup_eng
       - run:
           name: Push documentation to Unwritten
           command:
             if [[ $(bundle exec rake -T docs:push) ]]; then bundle exec rake
             docs:push; fi
-  release:
-    docker:
-      - image: cimg/ruby:3.3.7
-        auth:
-          username: "$DOCKERHUB_USERNAME"
-          password: "$DOCKERHUB_PASSWORD"
-    steps:
-      - checkout
-      - run: bundle config stitchfix01.jfrog.io $ARTIFACTORY_USER:$ARTIFACTORY_TOKEN
-      - run: bundle install
-      - run:
-          name: Artifactory login
-          command:
-            mkdir -p ~/.gem && curl -u$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN https://stitchfix01.jfrog.io/stitchfix01/api/gems/eng-gems/api/v1/api_key.yaml
-            > ~/.gem/credentials && chmod 0600 ~/.gem/credentials
-      - run:
-          name: Build/release gem to artifactory
-          command: bundle exec rake push_artifactory
   test:
     parameters:
       ruby-version:
@@ -87,6 +73,7 @@ jobs:
         auth:
           username: "$DOCKERHUB_USERNAME"
           password: "$DOCKERHUB_PASSWORD"
+    resource_class: medium.gen2
     working_directory: "~/stitches"
     environment:
       DATABASE_URL: "postgres://postgres:@localhost:5432/stitches_fake_app_test"
@@ -136,19 +123,10 @@ workflows:
     unless:
       equal: ["schedule", << pipeline.parameters.GHA_Event >>]
     jobs:
-      - release:
-          context: org-global
-          requires:
-            - test
-          filters:
-            tags:
-              only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:(-|\\.)(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
-            branches:
-              ignore: /.*/
       - generate-and-push-docs:
           context: org-global
           requires:
-            - release
+            - test
           filters:
             tags:
               only: "/^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:(-|\\.)(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/"
