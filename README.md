@@ -42,6 +42,82 @@ Stitches.configure do |config|
 end
 ```
 
+### Caller Identification
+
+When API key auth is disabled, services lose the ability to identify which
+internal service is calling them. Stitches 5.1+ provides two mechanisms that
+work together to restore this — one automatic, one opt-in.
+
+The calling service header name defaults to `X-StitchFix-Calling-Service` but
+is configurable via `Stitches.configuration.calling_service_header`.
+
+#### CallingServiceMiddleware (automatic)
+
+`CallingServiceMiddleware` is registered via the railtie and runs after the
+`ApiKey` middleware. When no auth middleware has populated the caller identity
+env var (`Stitches.configuration.env_var_to_hold_api_client`), it reads the
+calling service header and populates it with a `CallingServiceClient` struct.
+
+**This means existing code that reads the caller identity object's `.name`
+continues to work with no changes** — the value now comes from the header
+instead of a DB lookup.
+
+`CallingServiceClient` implements:
+- `.name` — the header value (e.g. "my-app")
+- `.id` — nil
+- `.key` — nil
+
+**Resolution order (for `request.env[env_var_to_hold_api_client]`):**
+
+1. If the `ApiKey` middleware authenticated a key → `ApiClient` record (has `.name`, `.id`, `.key`)
+2. If JWT or other auth middleware set the env var → that object (e.g. a user)
+3. If neither ran, but `X-StitchFix-Calling-Service` header is present → `CallingServiceClient` struct
+4. If nothing → nil
+
+**Middleware ordering:** `ApiKey` → `CallingServiceMiddleware` → `ValidMimeType`
+
+#### CallingServiceName concern (opt-in)
+
+For cases where you want strictly the header value (e.g. metrics tags where
+you never want a human user's name), include the concern:
+
+```ruby
+class Api::ApiController < ActionController::API
+  include Stitches::CallingServiceName
+end
+
+# Returns the header value only, empty string if absent:
+calling_service_name  # => "my-app" or ""
+```
+
+#### Configuration
+
+The header name is configurable (defaults to `X-StitchFix-Calling-Service`):
+
+```ruby
+Stitches.configure do |config|
+  config.calling_service_header = "X-My-Custom-Header"
+end
+```
+
+#### Security considerations
+
+`X-StitchFix-Calling-Service` is a **self-declared, unsigned header**. Any
+caller that can reach your service can set it to any value. This means:
+
+- **Do not use it as a sole authorization mechanism** for sensitive operations
+  unless the network layer guarantees that only the legitimate service can
+  reach the endpoint.
+- **Strip this header at public ingress points** (Traefik, ALB, API gateway)
+  to prevent external callers from spoofing internal service identities.
+- **This header replaces API key-based identity, not authorization.** It
+  provides identification only. If you need to verify the caller's identity
+  cryptographically, use mTLS or a service mesh AuthorizationPolicy.
+- **Safe uses:** stats tagging, logging, `updated_by` audit fields, routing
+  hints, non-security-critical behavioral branching.
+- **Unsafe without network enforcement:** access control decisions, privilege
+  escalation gates, bypassing user-facing safety flows.
+
 ### Upgrading from an older version
 
 - When upgrading to version 4.0.0 and above you may now take advantage of an in-memory cache
