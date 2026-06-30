@@ -37,18 +37,24 @@ describe Stitches::CallingServiceMiddleware do
     end
 
     context "when the header is absent and env var is not set" do
-      it "leaves the env var nil" do
+      it "sets a fallback CallingServiceClient with empty name" do
         _status, result_env, _body = middleware.call(env)
-        expect(result_env[client_key]).to be_nil
+        client = result_env[client_key]
+
+        expect(client).to be_a(Stitches::CallingServiceClient)
+        expect(client.name).to eq("")
       end
     end
 
     context "when the header is blank" do
       before { env["HTTP_X_STITCHFIX_CALLING_SERVICE"] = "" }
 
-      it "leaves the env var nil" do
+      it "sets a fallback CallingServiceClient with empty name" do
         _status, result_env, _body = middleware.call(env)
-        expect(result_env[client_key]).to be_nil
+        client = result_env[client_key]
+
+        expect(client).to be_a(Stitches::CallingServiceClient)
+        expect(client.name).to eq("")
       end
     end
 

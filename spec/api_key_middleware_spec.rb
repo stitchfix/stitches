@@ -45,7 +45,7 @@ RSpec.describe "/api/hellos", type: :request do
     it "does not look up information from the database" do
       execute_call
 
-      expect(response.body).to include "NameNotFound"
+      expect(response.body).to include "Hello ,"
       expect(response.body).to include "IdNotFound"
     end
 
@@ -315,7 +315,7 @@ RSpec.describe "/api/hellos", type: :request do
           it "does not save the api_client information used" do
             execute_call
 
-            expect(response.body).to include "NameNotFound"
+            expect(response.body).to include "Hello ,"
             expect(response.body).to include "IdNotFound"
           end
         end
