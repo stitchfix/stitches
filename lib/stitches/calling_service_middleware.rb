@@ -17,9 +17,8 @@ module Stitches
         header_name = Stitches.configuration.calling_service_header
         rack_key = "HTTP_#{header_name.upcase.tr('-', '_')}"
 
-        if (name = env[rack_key]).present?
-          env[client_key] = CallingServiceClient.new(name)
-        end
+        name = env[rack_key].presence || ""
+        env[client_key] = CallingServiceClient.new(name)
       end
 
       @app.call(env)
