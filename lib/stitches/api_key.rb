@@ -23,7 +23,9 @@ module Stitches
   protected
 
     def do_call(env)
-      return @app.call(env) if Stitches.configuration.disable_api_key_support
+      disable = Stitches.configuration.disable_api_key_support
+      disable = disable.call(env) if disable.respond_to?(:call)
+      return @app.call(env) if disable
 
       authorization = env["HTTP_AUTHORIZATION"]
       if authorization
