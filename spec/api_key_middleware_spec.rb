@@ -56,6 +56,73 @@ RSpec.describe "/api/hellos", type: :request do
     end
   end
 
+  context "disable_api_key_support is a callable" do
+    before do
+      Stitches.configuration.reset_to_defaults!
+      Stitches.configuration.custom_http_auth_scheme = 'MyAwesomeInternalScheme'
+      Stitches::ApiClientAccessWrapper.clear_api_cache
+    end
+
+    context "when the callable always returns true" do
+      before do
+        Stitches.configuration.disable_api_key_support = ->(_env) { true }
+      end
+
+      it "skips auth and reaches the controller" do
+        execute_call(auth: nil)
+
+        expect(response.body).to include "Hello"
+        expect(response.status).to eq 200
+      end
+
+      it "does not populate api client env vars" do
+        execute_call(auth: nil)
+
+        expect(response.body).to include "Hello ,"
+        expect(response.body).to include "IdNotFound"
+      end
+    end
+
+    context "when the callable always returns false" do
+      before do
+        Stitches.configuration.disable_api_key_support = ->(_env) { false }
+      end
+
+      it "enforces auth and returns 401" do
+        execute_call(auth: nil)
+
+        expect_unauthorized
+      end
+    end
+
+    context "when the callable inspects the request hostname" do
+      before do
+        Stitches.configuration.disable_api_key_support = ->(env) {
+          env['HTTP_HOST'].to_s.include?(".int.")
+        }
+      end
+
+      context "request arrives on the internal hostname" do
+        it "skips auth" do
+          host! "myapp.staging.int.example.com"
+          execute_call(auth: nil)
+
+          expect(response.body).to include "Hello"
+          expect(response.status).to eq 200
+        end
+      end
+
+      context "request arrives on the public hostname" do
+        it "enforces auth" do
+          host! "myapp.staging.example.com"
+          execute_call(auth: nil)
+
+          expect_unauthorized
+        end
+      end
+    end
+  end
+
   context "enabled api key support" do
     before do
       Stitches.configuration.reset_to_defaults!

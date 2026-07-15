@@ -42,6 +42,21 @@ Stitches.configure do |config|
 end
 ```
 
+You can also pass a callable (lambda, proc, or any object responding to `#call`) to make
+per-request auth decisions. The callable receives the Rack `env` hash and should return a
+truthy value to skip auth:
+
+```ruby
+Stitches.configure do |config|
+  config.disable_api_key_support = ->(env) {
+    env['HTTP_HOST'].to_s.include?('.int.example.com')
+  }
+end
+```
+
+This is useful for services that serve both internal (no auth needed) and external (auth
+required) traffic on different hostnames without requiring a separate deployment.
+
 ### Caller Identification
 
 When API key auth is disabled, services lose the ability to identify which
